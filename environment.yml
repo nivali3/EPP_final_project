@@ -20,6 +20,7 @@ dependencies:
   - python=3.9
   - python-graphviz
   - scikit-learn
+  - scipy
 
 
   - virtualenv=20.0.33
