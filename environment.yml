@@ -7,6 +7,7 @@ dependencies:
   - conda-build
   - ipykernel
   - jupyterlab
+  - numpy
   - plotly>=5.5.0
   - pandas
   - pip
@@ -18,6 +19,7 @@ dependencies:
   - pytest-cov
   - python=3.9
   - python-graphviz
+  - scikit-learn
 
 
   - virtualenv=20.0.33
