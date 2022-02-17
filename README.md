@@ -11,3 +11,5 @@ IDEA 3 (MAIN): Using estimagic/Replace scipy with estimagic. In other words, do 
 JUPYTER NOTEBOOK - table_5_6_NLS, Cell 6: Maybe the difference between replicated numbers and original numbers are because in the "power cost function" case it is LOG of effort ...
 
 QUESTION: In table_5_6_NLS, how does the initial values for k, g, and s guessed? 
+
+First Task: `table_5_6_nls.ipynb`- TRY to re-do the code using estimagic.
