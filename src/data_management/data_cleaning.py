@@ -2,27 +2,47 @@ import numpy as np
 import pandas as pd
 
 
-def create_new_payoffs(data, treatment_classes, payoff_classes):
+def create_nls_data(data, treatment_classes, payoff_classes):
     """DOCSTRING
+    data : initial data-mturk_clean_data_short
     """
 
-    for k1 in treatment_classes.keys():
-        data[k1] = 1 if k1 == 'prob' else 0
-        for i,j in list(zip(treatment_classes[k1], payoff_classes[k1])):
-            data.loc[data.treatment == i, k1] = j
+    data_with_payoffs = _create_new_payoffs(data, treatment_classes, payoff_classes)
+    data_with_efforts = _create_efforts(data)
+    data.drop('buttonpresses', axis=1, inplace=True)
 
-    return data
+    nls_data = pd.concat(objs=[data, data_with_payoffs, data_with_efforts], axis=1)
+
+    return nls_data
 
 
-def create_efforts(data, buttonpresses):
+def _create_new_payoffs(data, treatment_classes, payoff_classes):
     """DOCSTRING
+    data : initial data-mturk_clean_data_short
     """
-    data.buttonpresses = data.buttonpresses + 0.1 # python rounds 50 to 0, while stata to 100. by adding a small value we avoid this mismatch
-    data['buttonpresses_nearest_100'] = round(data.buttonpresses,-2)
-    data.loc[data.buttonpresses_nearest_100 == 0, 'buttonpresses_nearest_100'] = 25
-    data['logbuttonpresses_nearest_100']  = np.log(data['buttonpresses_nearest_100'])
+    data_with_payoffs = data[['treatment']]
     
-    return data
+    for key in treatment_classes.keys():
+        data_with_payoffs[key] = 1 if key == 'prob' else 0
+        for i,j in list(zip(treatment_classes[key], payoff_classes[key])):
+            data_with_payoffs.loc[data_with_payoffs.treatment == i, key] = j
+    
+    data_with_payoffs.drop('treatment', axis=1, inplace=True)
+
+    return data_with_payoffs
+
+
+def _create_efforts(data):
+    """DOCSTRING
+    """
+    data_with_efforts = data[['buttonpresses']]
+    
+    data_with_efforts += 0.1 # python rounds 50 to 0, while stata to 100. by adding a small value we avoid this mismatch
+    data_with_efforts['buttonpresses_nearest_100'] = round(data_with_efforts,-2)
+    data_with_efforts.loc[data_with_efforts['buttonpresses_nearest_100'] == 0, 'buttonpresses_nearest_100'] = 25
+    data_with_efforts['logbuttonpresses_nearest_100']  = np.log(data_with_efforts['buttonpresses_nearest_100'])
+    
+    return data_with_efforts
 
 
 treatment_classes = {
@@ -49,13 +69,9 @@ payoff_classes = {
 }
 
 
-data = pd.read_stata('../original_data/mturk_clean_data_short.dta')
-
-data = create_new_payoffs(data, treatment_classes, payoff_classes)
-data = create_efforts(data, 'buttonpresses')
-
 # # For testing
-# data.equals(dt)
+# sorted(new_data.columns)
+# sorted(dt.columns)
 
-# a = np.where(data != dt)
+# a = np.where(new_data[sorted(new_data.columns)] != dt[sorted(dt.columns)])
 # a
