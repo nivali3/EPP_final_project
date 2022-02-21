@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
-from data_cleaning import create_new_payoffs
-from data_cleaning import create_efforts
+from data_cleaning import create_nls_data
 
 
 # TESTs for the main function
@@ -30,9 +29,8 @@ def test_nls_data():
         'gift_dummy' : [1]
     }
     dt = pd.read_stata('../original_data/mturk_clean_data_short.dta')
-    actual_values = create_new_payoffs(dt, treatment_classes, payoff_classes)
-    actual_values = create_efforts(actual_values)
-    assert actual_values.equals(expected_values)
+    actual_values = create_nls_data(dt, treatment_classes, payoff_classes)
+    assert actual_values[sorted(actual_values.columns)].equals(expected_values[sorted(expected_values.columns)])
 
 
 def true_data():
