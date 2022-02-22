@@ -62,6 +62,13 @@ def _create_efforts(data):
     return data_with_efforts
 
 
+def create_dummy(dt, *treatment):
+    for i in treatment:
+        dt['dummy1'] += (dt['treatment']==i).astype(int)
+
+    return dt
+
+
 treatment_classes = {
     'payoff_per_100' : ['1.1', '1.2', '1.3', '2', '1.4', '4.1', '4.2', '6.2', '6.1'],
     'payoff_charity_per_100' : ['3.1', '3.2'],
