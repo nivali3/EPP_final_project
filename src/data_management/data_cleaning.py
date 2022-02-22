@@ -3,22 +3,34 @@ import pandas as pd
 
 
 def create_nls_data(data, treatment_classes, payoff_classes):
-    """DOCSTRING
-    data : initial data-mturk_clean_data_short
+    """Generate the dataset suitable for NLS by adding columns for payoffs and efforts to the original data.
+    Args:
+        data (dataset): initial data-mturk_clean_data_short
+        treatment_classes (dict): dictionary containing treatment identifiers
+        payoff_classes (dict): dictionary containing payoff. It must have the same keys and the same number of
+        values for each key as treatment_classes
+ 
+    Returns:
+        (pd.DataFrame): dataset ready to be used for NLS analysis
     """
 
     data_with_payoffs = _create_new_payoffs(data, treatment_classes, payoff_classes)
     data_with_efforts = _create_efforts(data)
-    data.drop('buttonpresses', axis=1, inplace=True)
+    data.drop('buttonpresses', axis=1, inplace=True) 
 
-    nls_data = pd.concat(objs=[data, data_with_payoffs, data_with_efforts], axis=1)
-
-    return nls_data
+    return pd.concat(objs=[data, data_with_payoffs, data_with_efforts], axis=1)
 
 
 def _create_new_payoffs(data, treatment_classes, payoff_classes):
-    """DOCSTRING
-    data : initial data-mturk_clean_data_short
+    """Generate the dataset whose columns containt the treatments' payoffs 
+    Args:
+        data (dataset): initial data-mturk_clean_data_short
+        treatment_classes (dict): dictionary containing treatment identifiers
+        payoff_classes (dict): dictionary containing payoff. It must have the same keys and the same number of
+        values for each key as treatment_classes
+ 
+    Returns:
+        data_with_payoffs (pd.DataFrame): dataset with payoffs
     """
     data_with_payoffs = data[['treatment']]
     
@@ -33,7 +45,12 @@ def _create_new_payoffs(data, treatment_classes, payoff_classes):
 
 
 def _create_efforts(data):
-    """DOCSTRING
+    """Generate the dataset whose columns containt the treatments' efforts 
+    Args:
+        data (dataset): initial data-mturk_clean_data_short
+ 
+    Returns:
+        data_with_efforts (pd.DataFrame): dataset with efforts
     """
     data_with_efforts = data[['buttonpresses']]
     
@@ -68,10 +85,3 @@ payoff_classes = {
     'gift_dummy' : [1]
 }
 
-
-# # For testing
-# sorted(new_data.columns)
-# sorted(dt.columns)
-
-# a = np.where(new_data[sorted(new_data.columns)] != dt[sorted(dt.columns)])
-# a
