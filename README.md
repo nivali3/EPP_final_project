@@ -13,3 +13,5 @@ JUPYTER NOTEBOOK - table_5_6_NLS, Cell 6: Maybe the difference between replicate
 QUESTION: In table_5_6_NLS, how does the initial values for k, g, and s guessed? 
 
 First Task: `table_5_6_nls.ipynb`- TRY to re-do the code using estimagic.
+
+## REMEMBER: Fix the PATH in the files at the end!
