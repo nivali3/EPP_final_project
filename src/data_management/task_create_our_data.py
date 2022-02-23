@@ -1,6 +1,5 @@
 """General DOCSTRING
 """
-import numpy as np
 import pandas as pd
 
 from src.data_management.data_cleaning import create_nls_data
@@ -45,7 +44,13 @@ def task_store_our_data(depends_on, produces):
         'gift_dummy' : [1]
     }
 
-    our_data = create_nls_data(dt, treatment_classes, payoff_classes)
+
+    treat_id_dummies = {'dummy1':['1.1','1.2','1.3'],
+                    'samplenw':['3.1','3.2','4.1','4.2','10'],
+                    'samplepr':['6.1','6.2']}
+
+
+    our_data = create_nls_data(dt, treatment_classes, payoff_classes, treat_id_dummies)
 
     # Create new variables needed for estimation:
 
