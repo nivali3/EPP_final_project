@@ -7,6 +7,7 @@ import scipy.optimize as opt
 
 from src.config import BLD
 from src.analysis.benchmark_with_exponential import benchmark_exp
+from src.analysis.no_weight_exp import no_weight_exp
 
 
 # fix depends on 
@@ -45,4 +46,41 @@ def task_least_squares(depends_on, produces):
         final.to_csv(f, index=False)
 
 
-# Find the solution to the problem by non-linear least squares 
+@pytask.mark.depends_on('../original_data/our_data.csv')
+@pytask.mark.produces('../analysis/no_weight_optimization.csv')
+def task_no_weight(depends_on, produces):
+    """Measure the runtime of pandas_batch_update and save the result."""
+
+    dt = pd.read_csv(depends_on)
+    alpha_init, a_init, beta_init, delta_init, gift_init = 0.003, 0.13, 1.16, 0.75, 5e-6
+    stvale_spec = [alpha_init, a_init, gift_init, beta_init, delta_init]
+    
+    gamma_init_exp, k_init_exp, s_init_exp =  0.015645717, 1.69443, 3.69198
+    k_scaler_exp, s_scaler_exp = 1e+16, 1e+6
+
+    k_init_exp = k_init_exp/k_scaler_exp
+    s_init_exp = s_init_exp/s_scaler_exp
+    
+    st_values_exp = [gamma_init_exp, k_init_exp, s_init_exp]
+
+
+    st_valuesnoweight_exp = np.concatenate((st_values_exp,stvale_spec)) # starting values
+
+    args = [dt.loc[dt['samplenw']==1].payoff_per_100, dt.loc[dt['samplenw']==1].gift_dummy, dt.loc[dt['samplenw']==1].delay_dummy,
+        dt.loc[dt['samplenw']==1].delay_wks, dt.loc[dt['samplenw']==1].payoff_charity_per_100, dt.loc[dt['samplenw']==1].charity_dummy]
+
+    sol = opt.curve_fit(no_weight_exp, 
+                        args,
+                        dt.loc[dt['samplenw']==1].buttonpresses_nearest_100,
+                        st_valuesnoweight_exp)
+    be56 = sol[0]
+    se56 = np.sqrt(np.diagonal(sol[1]))
+
+    final = {'estimates' : be56,
+        'variances' : se56}
+
+    final = pd.DataFrame(final)
+
+    with open(produces, "w") as f:
+        final.to_csv(f, index=False)
+
