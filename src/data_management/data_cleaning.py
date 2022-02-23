@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-def create_nls_data(data, treatment_classes, payoff_classes):
+def create_nls_data(data, treatment_classes, payoff_classes, treat_id_dummies):
     """Generate the dataset suitable for NLS by adding columns for payoffs and efforts to the original data.
     Args:
         data (dataset): initial data-mturk_clean_data_short
@@ -16,9 +16,11 @@ def create_nls_data(data, treatment_classes, payoff_classes):
 
     data_with_payoffs = _create_new_payoffs(data, treatment_classes, payoff_classes)
     data_with_efforts = _create_efforts(data)
-    data.drop('buttonpresses', axis=1, inplace=True) 
+    data.drop('buttonpresses', axis=1, inplace=True)
+    data_with_dummies =_create_dummy(data, treat_id_dummies)
 
-    return pd.concat(objs=[data, data_with_payoffs, data_with_efforts], axis=1)
+
+    return pd.concat(objs=[data, data_with_payoffs, data_with_efforts, data_with_dummies], axis=1)
 
 
 def _create_new_payoffs(data, treatment_classes, payoff_classes):
@@ -62,11 +64,20 @@ def _create_efforts(data):
     return data_with_efforts
 
 
-def create_dummy(dt, *treatment):
-    for i in treatment:
-        dt['dummy1'] += (dt['treatment']==i).astype(int)
-
-    return dt
+def _create_dummy(data, treat):
+    data_with_dummies = data[['treatment']]
+    for i in treat:
+        data_with_dummies[i] = 0
+        if i == 'dummy1':
+            for j in treat[i]:
+                data_with_dummies[i] += (data_with_dummies['treatment']==j).astype(int)
+        else:
+            data_with_dummies[i] = data_with_dummies['dummy1']
+            for j in treat[i]:
+                data_with_dummies[i] += (data_with_dummies['treatment']==j).astype(int)
+                
+    data_with_dummies.drop('treatment', axis=1, inplace=True)            
+    return data_with_dummies
 
 
 treatment_classes = {
@@ -92,3 +103,6 @@ payoff_classes = {
     'gift_dummy' : [1]
 }
 
+treat_id_dummies = {'dummy1':['1.1','1.2','1.3'],
+                    'samplenw':['3.1','3.2','4.1','4.2','10'],
+                    'samplepr':['6.1','6.2']}
