@@ -6,12 +6,12 @@ from src.data_management.data_cleaning import create_nls_data
 
 import pytask
 
-# from src.config import BLD
-# from src.config import SRC
+from src.config import BLD
+from src.config import SRC
 
 
-@pytask.mark.depends_on('../original_data/mturk_clean_data_short.dta')
-@pytask.mark.produces('../original_data/our_data.csv')
+@pytask.mark.depends_on(SRC/'original_data'/'mturk_clean_data_short.dta')
+@pytask.mark.produces(BLD/'our_nls_data.csv')
 def task_store_our_data(depends_on, produces):
     """Obtain the nls dataset used by Massimiliano and Nunnary 
     in the Jupyter notebook and save this as `replicated_nls-dataset.csv` 
