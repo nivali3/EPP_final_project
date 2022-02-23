@@ -14,14 +14,14 @@ def benchmark_power(pay100, g, k, s):
     return f_x
 
 
-def benchmark_power_least_squares(dt, params, k_scaler_power, s_scaler_power):
+def benchmark_power_least_squares(params, dt):
     
     pay100 = np.array(dt.loc[dt['dummy1']==1].payoff_per_100)
     logbuttonpresses = np.array(dt.loc[dt['dummy1']==1].logbuttonpresses_nearest_100)
     g, k, s = params
     
-    check1= max(k/k_scaler_power, 1e-115)
-    check2= np.maximum(s/s_scaler_power + pay100, 1e-10)   
+    check1= max(k, 1e-115)
+    check2= np.maximum(s + pay100, 1e-10)   
     
     f_x = 0.5*((-1/g * np.log(check1) +1/g * np.log(check2))-logbuttonpresses)**2
     
