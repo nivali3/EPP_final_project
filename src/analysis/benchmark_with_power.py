@@ -4,10 +4,10 @@ import numpy as np
 # pay100 is the column we created containing the piece rate for different treatments
 # g, k, s are the parameters to estimate (our θ vector). g stands for gamma.
 
-def benchmark_power(pay100, g, k, s, k_scaler_power, s_scaler_power):
+def benchmark_power(pay100, g, k, s):
     
-    check1= max(k/k_scaler_power, 1e-115)                  # since check1 will enter log it must be greater than zero
-    check2= np.maximum(s/s_scaler_power + pay100, 1e-10)   # np.maximum computes the max element wise. We do not want a negative value inside log
+    check1= max(k, 1e-115)                  # since check1 will enter log it must be greater than zero
+    check2= np.maximum(s + pay100, 1e-10)   # np.maximum computes the max element wise. We do not want a negative value inside log
     
     f_x = (-1/g * np.log(check1) +1/g * np.log(check2))
     
