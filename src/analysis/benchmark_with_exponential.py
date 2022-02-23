@@ -4,10 +4,10 @@ import numpy as np
 # pay100 is the column we created containing the piece rate for different treatments
 # g, k, s are the parameters to estimate (our θ vector). g stands for gamma.
 
-def benchmark_exp(pay100, g, k, s, k_scaler_exp, s_scaler_exp):
+def benchmark_exp(pay100, g, k, s):
     
-    check1 = k/k_scaler_exp            # 'first'  component to compute f(x,θ). We call it check1 since it will enter a log, so we need to be careful with its value being > 0
-    check2 = s/s_scaler_exp + pay100   # 'second' component to compute f(x,θ)
+    check1 = k            # 'first'  component to compute f(x,θ). We call it check1 since it will enter a log, so we need to be careful with its value being > 0
+    check2 = s + pay100   # 'second' component to compute f(x,θ)
     
     f_x = (-1/g * np.log(check1) +1/g * np.log(check2))   # f(x,θ) written above
     
