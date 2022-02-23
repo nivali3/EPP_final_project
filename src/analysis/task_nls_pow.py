@@ -19,8 +19,8 @@ def task_curve_fit_power(depends_on, produces):
     gamma_init_power, k_init_power, s_init_power =  19.8117987, 1.66306e-10, 7.74996
     k_scaler_power, s_scaler_power = 1e+57,1e+6
 
-    k_init_power = k_init_power/k_scaler_power
-    s_init_power = s_init_power/s_scaler_power
+    k_init_power /= k_scaler_power
+    s_init_power /= s_scaler_power
     
     st_values_power = [gamma_init_power, k_init_power, s_init_power]
 
@@ -50,8 +50,8 @@ def task_least_squares_power(depends_on, produces):
     gamma_init_power, k_init_power, s_init_power =  19.8117987, 1.66306e-10, 7.74996
     k_scaler_power, s_scaler_power = 1e+57,1e+6
 
-    k_init_power = k_init_power/k_scaler_power
-    s_init_power = s_init_power/s_scaler_power
+    k_init_power /= k_scaler_power
+    s_init_power /= s_scaler_power
     
     st_values_power = [gamma_init_power, k_init_power, s_init_power]
 
@@ -88,8 +88,8 @@ def task_minimize_power(depends_on, produces):
     gamma_init_power, k_init_power, s_init_power =  19.8117987, 1.66306e-10, 7.74996
     k_scaler_power, s_scaler_power = 1e+57,1e+6
 
-    k_init_power = k_init_power/k_scaler_power
-    s_init_power = s_init_power/s_scaler_power
+    k_init_power /= k_scaler_power
+    s_init_power /= s_scaler_power
     
     st_values_power = [gamma_init_power, k_init_power, s_init_power]
 
