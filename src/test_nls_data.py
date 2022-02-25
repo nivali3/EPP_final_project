@@ -1,47 +1,27 @@
+"""Test to check whether forward moving average is calculated correctly.
+
+"""
 import pandas as pd
 import numpy as np
-from src.data_management.data_cleaning import create_nls_data
+
+from src.config import BLD
+from src.config import SRC
 
 
-# TESTs for the main function
 def test_nls_data():
-    expected_values = true_data()
-    treatment_classes = {
-        'payoff_per_100' : ['1.1', '1.2', '1.3', '2', '1.4', '4.1', '4.2', '6.2', '6.1'],
-        'payoff_charity_per_100' : ['3.1', '3.2'],
-        'charity_dummy' : ['3.1', '3.2'],
-        'delay_wks' : ['4.1', '4.2'],
-        'delay_dummy' : ['4.1', '4.2'],
-        'prob' : ['6.1', '6.2'],
-        'weight_dummy' : ['6.1'],
-        'gift_dummy' : ['10']
-    }
-
-
-    payoff_classes = {
-        'payoff_per_100' : [0.01, 0.1, 0.0, 0.001, 0.04, 0.01, 0.01, 0.02, 1],
-        'payoff_charity_per_100' : [0.01, 0.1],
-        'charity_dummy' : [1, 1],
-        'delay_wks' : [2, 4],
-        'delay_dummy' : [1, 1],
-        'prob' : [0.01, 0.5],
-        'weight_dummy' : [1],
-        'gift_dummy' : [1]
-    }
-    dt = pd.read_stata('src/original_data/mturk_clean_data_short.dta')
-    actual_values = create_nls_data(dt, treatment_classes, payoff_classes)
+    expected_values = replication_data()
+    actual_values = pd.read_csv(BLD / "data" / "nls_data.csv")
     assert actual_values[sorted(actual_values.columns)].equals(expected_values[sorted(expected_values.columns)])
 
 
-def true_data():
-    # import the dataset
+def replication_data():
 
-    dt = pd.read_stata('src/original_data/mturk_clean_data_short.dta')
+    dt = pd.read_stata(SRC / "original_data" / "mturk_clean_data_short.dta")
 
     # Create new variables needed for estimation:
 
     # Create piece-rate payoffs per 100 button presses (p)
-
+    
     dt['payoff_per_100'] = 0
     dt.loc[dt.treatment == '1.1', 'payoff_per_100'] = 0.01
     dt.loc[dt.treatment == '1.2', 'payoff_per_100'] = 0.1
