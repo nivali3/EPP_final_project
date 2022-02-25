@@ -20,45 +20,57 @@ def no_weight_exp(xdata, g, k, s, alpha, a, gift, beta, delta):
     return f_x
 
 
-def probweight4Exp(xdata, g, k, s, p_weight, k_scaler_exp, s_scaler_exp):
+# def probweight4Exp(xdata, g, k, s, p_weight, k_scaler_exp, s_scaler_exp):
     
+#     pay100 = xdata[0]
+#     wd = xdata[1]
+#     prob = xdata[2]
+    
+#     check1 = k/k_scaler_exp
+#     check2 = s/s_scaler_exp + p_weight**wd*prob*pay100
+    
+#     f_x = (-1/g * np.log(check1) + 1/g*np.log(check2))
+    
+#     return f_x
+
+
+# def probweight5Exp(xdata, g, k, s, p_weight, k_scaler_exp, s_scaler_exp):
+    
+#     pay100 = xdata[0]
+#     wd = xdata[1]
+#     prob = xdata[2]
+    
+#     check1=k/k_scaler_exp
+#     check2=s/s_scaler_exp + p_weight**wd*prob*pay100**0.88
+#     f_x = (-1/g * np.log(check1) + 1/g*np.log(check2))
+    
+#     return f_x
+
+
+# def probweight6Exp(xdata, g, k, s, p_weight, curv, k_scaler_exp, s_scaler_exp):
+    
+#     pay100 = xdata[0]
+#     wd = xdata[1]
+#     prob = xdata[2]
+    
+#     check1=k/k_scaler_exp
+#     check2=s/s_scaler_exp + p_weight**wd*prob*pay100**curv
+    
+#     f_x = (-1/g * np.log(check1) + 1/g*np.log(check2))
+    
+#     return f_x
+
+
+def prob_weight_6_exp(xdata, g, k, s, p_weight, curv):
+    '''DOCSTRING
+    '''
     pay100 = xdata[0]
     wd = xdata[1]
     prob = xdata[2]
     
-    check1 = k/k_scaler_exp
-    check2 = s/s_scaler_exp + p_weight**wd*prob*pay100
+    check1=k
+    check2=s + p_weight**wd*prob*pay100**curv
     
     f_x = (-1/g * np.log(check1) + 1/g*np.log(check2))
     
     return f_x
-
-
-def probweight5Exp(xdata, g, k, s, p_weight, k_scaler_exp, s_scaler_exp):
-    
-    pay100 = xdata[0]
-    wd = xdata[1]
-    prob = xdata[2]
-    
-    check1=k/k_scaler_exp
-    check2=s/s_scaler_exp + p_weight**wd*prob*pay100**0.88
-    f_x = (-1/g * np.log(check1) + 1/g*np.log(check2))
-    
-    return f_x
-
-
-def probweight6Exp(xdata, g, k, s, p_weight, curv, k_scaler_exp, s_scaler_exp):
-    
-    pay100 = xdata[0]
-    wd = xdata[1]
-    prob = xdata[2]
-    
-    check1=k/k_scaler_exp
-    check2=s/s_scaler_exp + p_weight**wd*prob*pay100**curv
-    
-    f_x = (-1/g * np.log(check1) + 1/g*np.log(check2))
-    
-    return f_x
-
-
-
