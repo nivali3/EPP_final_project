@@ -1,12 +1,10 @@
 import numpy as np
 import pandas as pd
 import pytask
-from src.config import SRC
 from src.config import BLD
 import scipy.optimize as opt
 from functools import partial
 
-#from src.config import BLD
 from src.analysis.funcs_with_pow_cost import benchmark_power, benchmark_power_least_squares, benchmark_power_opt, noweight_power, probweight_power
 
 gamma_init_power, k_init_power, s_init_power =  19.8117987, 1.66306e-10, 7.74996
@@ -37,7 +35,7 @@ def create_inputs(dt):
 
 
 # fix depends on 
-@pytask.mark.depends_on(SRC/'original_data'/'our_data.csv')
+@pytask.mark.depends_on(BLD/'data'/'nls_data.csv')
 @pytask.mark.produces(BLD/'analysis'/'est_benchmark_pow.csv')
 def task_opt_benchmark_pow(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result."""
@@ -60,7 +58,7 @@ def task_opt_benchmark_pow(depends_on, produces):
         final.to_csv(f, index=False)
 
 
-@pytask.mark.depends_on(SRC/'original_data'/'our_data.csv')
+@pytask.mark.depends_on(BLD/'data'/'nls_data.csv')
 @pytask.mark.produces(BLD/'analysis'/'est_benchmark_pow_alt1.csv')
 def task_opt_benchmark_pow_alt1(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result."""
@@ -89,7 +87,7 @@ def task_opt_benchmark_pow_alt1(depends_on, produces):
 
 # Find the solution to the problem by non-linear least squares 
 
-@pytask.mark.depends_on(SRC/'original_data'/'our_data.csv')
+@pytask.mark.depends_on(BLD/'data'/'nls_data.csv')
 @pytask.mark.produces(BLD/'analysis'/'est_benchmark_pow_alt2.csv')
 def task_opt_benchmark_pow_alt2(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result."""
@@ -112,7 +110,7 @@ def task_opt_benchmark_pow_alt2(depends_on, produces):
         final.to_csv(f, index=False)
 
  
-@pytask.mark.depends_on(SRC/'original_data'/'our_data.csv')
+@pytask.mark.depends_on(BLD/'data'/'nls_data.csv')
 @pytask.mark.produces(BLD/'analysis'/'est_noweight_pow.csv')
 def task_opt_noweight_pow(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result."""
@@ -137,7 +135,7 @@ def task_opt_noweight_pow(depends_on, produces):
     with open(produces, "w") as f:
         final.to_csv(f, index=False)
 
-@pytask.mark.depends_on(SRC/'original_data'/'our_data.csv')
+@pytask.mark.depends_on(BLD/'data'/'nls_data.csv')
 @pytask.mark.produces(BLD/'analysis'/'est_weight_pow_lin_curv.csv')
 def task_opt_weight_pow_lin_curv(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result."""
@@ -165,7 +163,7 @@ def task_opt_weight_pow_lin_curv(depends_on, produces):
         final.to_csv(f, index=False)
 
 
-@pytask.mark.depends_on(SRC/'original_data'/'our_data.csv')
+@pytask.mark.depends_on(BLD/'data'/'nls_data.csv')
 @pytask.mark.produces(BLD/'analysis'/'est_weight_pow_conc_curv.csv')
 def task_opt_weight_pow_conc_curv(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result."""
@@ -194,7 +192,7 @@ def task_opt_weight_pow_conc_curv(depends_on, produces):
         final.to_csv(f, index=False)
 
 
-@pytask.mark.depends_on(SRC/'original_data'/'our_data.csv')
+@pytask.mark.depends_on(BLD/'data'/'nls_data.csv')
 @pytask.mark.produces(BLD/'analysis'/'est_weight_pow_est_curv.csv')
 def task_opt_weight_pow_est_curv(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result."""
