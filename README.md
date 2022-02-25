@@ -15,3 +15,9 @@ QUESTION: In table_5_6_NLS, how does the initial values for k, g, and s guessed?
 First Task: `table_5_6_nls.ipynb`- TRY to re-do the code using estimagic.
 
 ## REMEMBER: Fix the PATH in the files at the end!
+
+
+
+QUESTION: Would it matter if we store all the generated outpus in .csv files or should we store them in .yaml and only final ones in .csv?
+
+In table_5_6_NLS, how does the initial values for k, g, and s guessed? 
