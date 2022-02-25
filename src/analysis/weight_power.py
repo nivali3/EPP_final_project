@@ -20,6 +20,18 @@ def noweight_power(args, g, k, s, alpha, a, gift, beta, delta):
     
     return f_x
 
+#for columns 4-5-6
+def probweight_power(args, g, k, s, p_weight, curv):
+    
+    pay100 = args['payoff_per_100']
+    wd = args['weight_dummy']
+    prob = args['prob']
+    
+    check1 = max(k, 1e-115)
+    check2 = np.maximum(s+p_weight**wd*prob*pay100**curv, 1e-10)
+    f_x = (-1/g * np.log(check1) + 1/g*np.log(check2))
+    
+    return f_x
 
 
 
