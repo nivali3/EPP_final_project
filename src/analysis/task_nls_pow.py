@@ -2,12 +2,12 @@ import numpy as np
 import pandas as pd
 import pytask
 from src.config import SRC
+from src.config import BLD
 import scipy.optimize as opt
 from functools import partial
 
 #from src.config import BLD
-from src.analysis.weight_power import noweight_power, probweight_power
-from src.analysis.benchmark_with_power import benchmark_power, benchmark_power_least_squares, benchmark_power_opt
+from src.analysis.funcs_with_pow_cost import benchmark_power, benchmark_power_least_squares, benchmark_power_opt, noweight_power, probweight_power
 
 gamma_init_power, k_init_power, s_init_power =  19.8117987, 1.66306e-10, 7.74996
 k_scaler_power, s_scaler_power = 1e+57,1e+6
@@ -22,22 +22,24 @@ stvale_spec = [alpha_init, a_init, gift_init, beta_init, delta_init]
 def create_inputs(dt):
     out={}
     out['samplenw'] = {'payoff_per_100': dt.loc[dt['samplenw']==1].payoff_per_100,
-'gift_dummy': dt.loc[dt['samplenw']==1].gift_dummy,
-'delay_dummy': dt.loc[dt['samplenw']==1].delay_dummy,
-'delay_wks': dt.loc[dt['samplenw']==1].delay_wks,
-'payoff_charity_per_100': dt.loc[dt['samplenw']==1].payoff_charity_per_100,
-'charity_dummy': dt.loc[dt['samplenw']==1].charity_dummy}
+        'gift_dummy': dt.loc[dt['samplenw']==1].gift_dummy,
+        'delay_dummy': dt.loc[dt['samplenw']==1].delay_dummy,
+        'delay_wks': dt.loc[dt['samplenw']==1].delay_wks,
+        'payoff_charity_per_100': dt.loc[dt['samplenw']==1].payoff_charity_per_100,
+        'charity_dummy': dt.loc[dt['samplenw']==1].charity_dummy
+    }
     out['samplepr'] = {'payoff_per_100': dt.loc[dt['samplepr']==1].payoff_per_100,
-'weight_dummy': dt.loc[dt['samplepr']==1].weight_dummy,
-'prob': dt.loc[dt['samplepr']==1].prob}
+        'weight_dummy': dt.loc[dt['samplepr']==1].weight_dummy,
+        'prob': dt.loc[dt['samplepr']==1].prob
+    }
 
     return out
 
 
 # fix depends on 
 @pytask.mark.depends_on(SRC/'original_data'/'our_data.csv')
-@pytask.mark.produces(SRC/'analysis'/'curve_fit_opt_pow.csv')
-def task_curve_fit_power(depends_on, produces):
+@pytask.mark.produces(BLD/'analysis'/'est_benchmark_pow.csv')
+def task_opt_benchmark_pow(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result."""
 
     dt = pd.read_csv(depends_on)
@@ -58,9 +60,9 @@ def task_curve_fit_power(depends_on, produces):
         final.to_csv(f, index=False)
 
 
-@pytask.mark.depends_on('../original_data/our_data.csv')
-@pytask.mark.produces('../analysis/least_squares_opt_pow.csv')
-def task_least_squares_power(depends_on, produces):
+@pytask.mark.depends_on(SRC/'original_data'/'our_data.csv')
+@pytask.mark.produces(BLD/'analysis'/'est_benchmark_pow_alt1.csv')
+def task_opt_benchmark_pow_alt1(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result."""
 
     dt = pd.read_csv(depends_on)
@@ -87,9 +89,9 @@ def task_least_squares_power(depends_on, produces):
 
 # Find the solution to the problem by non-linear least squares 
 
-@pytask.mark.depends_on('../original_data/our_data.csv')
-@pytask.mark.produces('../analysis/minimize_opt_pow.csv')
-def task_minimize_power(depends_on, produces):
+@pytask.mark.depends_on(SRC/'original_data'/'our_data.csv')
+@pytask.mark.produces(BLD/'analysis'/'est_benchmark_pow_alt2.csv')
+def task_opt_benchmark_pow_alt2(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result."""
 
     dt = pd.read_csv(depends_on)
@@ -110,9 +112,9 @@ def task_minimize_power(depends_on, produces):
         final.to_csv(f, index=False)
 
  
-@pytask.mark.depends_on('../original_data/our_data.csv')
-@pytask.mark.produces('../analysis/noweight_opt_pow.csv')
-def task_noweight_power(depends_on, produces):
+@pytask.mark.depends_on(SRC/'original_data'/'our_data.csv')
+@pytask.mark.produces(BLD/'analysis'/'est_noweight_pow.csv')
+def task_opt_noweight_pow(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result."""
 
     st_valuesnoweight_power = np.concatenate((st_values_power,stvale_spec)) # starting values
@@ -135,9 +137,9 @@ def task_noweight_power(depends_on, produces):
     with open(produces, "w") as f:
         final.to_csv(f, index=False)
 
-@pytask.mark.depends_on('../original_data/our_data.csv')
-@pytask.mark.produces('../analysis/weight_4_opt_pow.csv')
-def task_weight_power(depends_on, produces):
+@pytask.mark.depends_on(SRC/'original_data'/'our_data.csv')
+@pytask.mark.produces(BLD/'analysis'/'est_weight_pow_lin_curv.csv')
+def task_opt_weight_pow_lin_curv(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result."""
 
 
@@ -163,9 +165,9 @@ def task_weight_power(depends_on, produces):
         final.to_csv(f, index=False)
 
 
-@pytask.mark.depends_on('../original_data/our_data.csv')
-@pytask.mark.produces('../analysis/weight_5_opt_pow.csv')
-def task_weight_power(depends_on, produces):
+@pytask.mark.depends_on(SRC/'original_data'/'our_data.csv')
+@pytask.mark.produces(BLD/'analysis'/'est_weight_pow_conc_curv.csv')
+def task_opt_weight_pow_conc_curv(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result."""
 
 
@@ -192,9 +194,9 @@ def task_weight_power(depends_on, produces):
         final.to_csv(f, index=False)
 
 
-@pytask.mark.depends_on('../original_data/our_data.csv')
-@pytask.mark.produces('../analysis/weight_6_opt_pow.csv')
-def task_weight_power(depends_on, produces):
+@pytask.mark.depends_on(SRC/'original_data'/'our_data.csv')
+@pytask.mark.produces(BLD/'analysis'/'est_weight_pow_est_curv.csv')
+def task_opt_weight_pow_est_curv(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result."""
 
 
