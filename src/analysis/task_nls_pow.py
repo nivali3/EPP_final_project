@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 import pytask
+import yaml
+
 from src.config import BLD
 import scipy.optimize as opt
 from functools import partial
@@ -36,7 +38,7 @@ def create_inputs(dt):
 
 # fix depends on 
 @pytask.mark.depends_on(BLD/'data'/'nls_data.csv')
-@pytask.mark.produces(BLD/'analysis'/'est_benchmark_pow.csv')
+@pytask.mark.produces(BLD/'analysis'/'est_benchmark_pow.yaml')
 def task_opt_benchmark_pow(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result."""
 
@@ -49,17 +51,16 @@ def task_opt_benchmark_pow(depends_on, produces):
     bp52 = sol[0]                       # sol[0] is the array containing our estimates
     sp52 = np.sqrt(np.diagonal(sol[1])) # sol[1] is a 3x3 variance-covariance matrix of our estimates
 
-    final = {'estimates' : bp52,
-        'variances' : sp52}
+    final = {'estimates' : bp52.tolist(),
+        'variances' : sp52.tolist(),
+        'min_obj_func' : (2*benchmark_power_opt(bp52, dt)).tolist()}
 
-    final = pd.DataFrame(final)
-
-    with open(produces, "w") as f:
-        final.to_csv(f, index=False)
+    with open(produces, "w") as y:
+        yaml.dump(final, y)
 
 
 @pytask.mark.depends_on(BLD/'data'/'nls_data.csv')
-@pytask.mark.produces(BLD/'analysis'/'est_benchmark_pow_alt1.csv')
+@pytask.mark.produces(BLD/'analysis'/'est_benchmark_pow_alt1.yaml')
 def task_opt_benchmark_pow_alt1(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result."""
 
@@ -74,13 +75,11 @@ def task_opt_benchmark_pow_alt1(depends_on, produces):
     bp52 = sol.x # sol.x is the array containing estimates 
                  # opt.least_squares does have any attribute that return var-cov matrix                     
     
+    final = {'estimates' : bp52.tolist(),
+        'min_obj_func' : (2*benchmark_power_opt(bp52, dt)).tolist()}
 
-    final = {'estimates' : bp52}
-
-    final = pd.DataFrame(final)
-
-    with open(produces, "w") as f:
-        final.to_csv(f, index=False)
+    with open(produces, "w") as y:
+        yaml.dump(final, y)
 
 
 
@@ -88,7 +87,7 @@ def task_opt_benchmark_pow_alt1(depends_on, produces):
 # Find the solution to the problem by non-linear least squares 
 
 @pytask.mark.depends_on(BLD/'data'/'nls_data.csv')
-@pytask.mark.produces(BLD/'analysis'/'est_benchmark_pow_alt2.csv')
+@pytask.mark.produces(BLD/'analysis'/'est_benchmark_pow_alt2.yaml')
 def task_opt_benchmark_pow_alt2(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result."""
 
@@ -101,13 +100,11 @@ def task_opt_benchmark_pow_alt2(depends_on, produces):
                        options={'maxiter': 2500})
     bp52_opt = sol_opt.x                  
     
+    final = {'estimates' : bp52_opt.tolist(),
+        'min_obj_func' : (2*benchmark_power_opt(bp52_opt, dt)).tolist()}
 
-    final = {'estimates' : bp52_opt}
-
-    final = pd.DataFrame(final)
-
-    with open(produces, "w") as f:
-        final.to_csv(f, index=False)
+    with open(produces, "w") as y:
+        yaml.dump(final, y)
 
  
 @pytask.mark.depends_on(BLD/'data'/'nls_data.csv')
