@@ -8,12 +8,12 @@ from src.config import BLD
 
 @pytask.mark.depends_on(
     {
-        "curve_fit": BLD / "analysis" / "est_benchmark_pow.yaml",
+        "curve_fit": BLD / "analysis" / "est_benchmark_pow.yaml", 
         "least_square": BLD / "analysis" / "est_benchmark_pow_alt1.yaml",
         "minimize_nd": BLD / "analysis" / "est_benchmark_pow_alt2.yaml"
     }
 )
-@pytask.mark.produces(BLD / "tables" / "table_pow_comparison.yaml")
+@pytask.mark.produces(BLD / "tables" / "table_pow_comparison.csv")
 def task_compare_opt_pow(depends_on, produces):
     """Load all the runtime information, combine it into a DataFrame with
     one column per function and also calculate the relative speedup of
@@ -30,7 +30,7 @@ def task_compare_opt_pow(depends_on, produces):
     #     yaml.dump(final, y)
 
 
-    runtimes_dictionary = {'parameters': ["Curvature γ of cost function","Level k of cost of effort", "Intrinsic motivation s","Min obj. function"]}
+    est_dictionary = {'parameters': ["Curvature \u03B3 of cost function","Level k of cost of effort", "Intrinsic motivation s","Min obj. function"]}
 
 
     # with open(depends_on["pandas"], "r") as stream:
@@ -45,21 +45,27 @@ def task_compare_opt_pow(depends_on, produces):
 
         with open(values, "r") as stream:
             temp = yaml.safe_load(stream)
-            runtimes_dictionary[name] = temp['estimates'] + [temp['min_obj_func']]
-    runtimes_dictionary['authors'] = [20.546,5.12e-13,3.17, 672.387]
+            est_dictionary[name] = temp['estimates'] + [temp['min obj func']]
+    est_dictionary['authors'] = [20.546,5.12e-13,3.17, 672.387]
 
-    with open(produces, "w") as y:
-        yaml.dump(runtimes_dictionary, y)
+    est_DF = pd.DataFrame.from_dict(est_dictionary)
 
+    #with open(produces, "w") as y:
+    #    yaml.dump(runtimes_dictionary, y)
+    with open(produces, "w", encoding="utf-8") as y:
+        est_DF.to_csv(y)
+
+
+# !!! this task needs to be adjusted with anoter version using partial instead of computing again the 3 benchmark parameters
 @pytask.mark.depends_on(
     {
-        "power": BLD / "analysis" / "est_benchmark_exp.yaml",
-        "exponential": BLD / "analysis" / "est_noweight_exp.csv",
-        "exponentil": BLD / "analysis" / "est_benchmark_pow.yaml",
-        "exponial": BLD / "analysis" / "est_noweight_pow.csv"
+        "bench pow": BLD / "analysis" / "est_benchmark_pow.yaml", #bp52 sp52
+        "noweight pow": BLD / "analysis" / "est_noweight_pow.yaml", #bp53 sp53
+        "bench exp": BLD / "analysis" / "est_benchmark_exp.yaml", #be54 se54
+        "noweight exp": BLD / "analysis" / "est_noweight_exp.yaml" #be56 se56
     }
 )
-@pytask.mark.produces(BLD / "tables" / "table_nls_est_behavioral.yaml")
+@pytask.mark.produces(BLD / "tables" / "table_nls_noweight_behavioral.csv")
 def task_nls_est_behavioral(depends_on, produces):
     """Load all the runtime information, combine it into a DataFrame with
     one column per function and also calculate the relative speedup of
@@ -67,22 +73,55 @@ def task_nls_est_behavioral(depends_on, produces):
     runtime to calculate relative improvement. Save this as `summary.csv`
     in `bld`.
     """
-    runtimes_dictionary = {'parameters': ["Curvature γ of cost function", "Level k of cost of effort", "Intrinsic motivation s","Social preferences α",
-        "Warm glow coefficient a","Gift exchange Δs", "Present bias β","(Weekly) discount factor δ"]}
+    est_dictionary = {'parameters': ["Curvature \u03B3 of cost function", "Level k of cost of effort", "Intrinsic motivation s","Social preferences \u03B1",
+        "Warm glow coefficient a","Gift exchange \u0394s ", "Present bias \u03B2","(Weekly) discount factor \u03B4"]}
 
-    #col = ['power_est', 'power_se', 'exp_est','exp_se']
+    for i in ['pow','exp']:
+        with open(depends_on[f'bench {i}'], "r") as stream:
+            temp = yaml.safe_load(stream)
+            est_dictionary[f'{i}_est'] = temp['estimates'] 
+            est_dictionary[f'{i}_se'] = temp['std dev']
+        with open(depends_on[f'noweight {i}'], "r") as stream:
+            temp = yaml.safe_load(stream)
+            est_dictionary[f'{i}_est'] += temp['estimates'][3:] 
+            est_dictionary[f'{i}_se'] += temp['std dev'][3:]
 
-    with open(depends_on['power'], "r") as stream:
-        temp = yaml.safe_load(stream)
-    runtimes_dictionary['power_est'] = temp['estimates'] 
-    runtimes_dictionary['power_se'] = temp['variances']
-
-    with open(depends_on['exponential'], "r") as stream:
-        temp = yaml.safe_load(stream)
-    runtimes_dictionary['exp_est'] = temp['estimates'] 
-    runtimes_dictionary['exp_se'] = temp['variances']
-
-    with open(produces, "w") as y:
-        yaml.dump(runtimes_dictionary, y)
+    est_DF = pd.DataFrame.from_dict(est_dictionary)
+    with open(produces, "w", encoding="utf-8") as y:
+        est_DF.to_csv(y)
 
 
+@pytask.mark.depends_on(
+    {
+        "lin curv pow": BLD / "analysis" / "est_weight_pow_lin_curv.yaml", #bp61 sp61
+        "conc curv pow": BLD / "analysis" / "est_weight_pow_conc_curv.yaml", #bp62 sp62
+        "estimated curv pow": BLD / "analysis" / "est_weight_pow_est_curv.yaml", #bp63 sp63
+        "lin curv exp": BLD / "analysis" / "est_weight_exp_lin_curv.yaml",#be64 se64
+        "conc curv exp": BLD / "analysis" / "est_weight_exp_conc_curv.yaml",#be65 se65
+        "estimated curv exp": BLD / "analysis" / "est_weight_exp_est_curv.yaml" #be66 se66
+
+    }
+)
+@pytask.mark.produces(BLD / "tables" / "table_nls_probweight_behavioral.csv")
+def task_nls_est_behavioral(depends_on, produces):
+    """Load all the runtime information, combine it into a DataFrame with
+    one column per function and also calculate the relative speedup of
+    each version compared to `pandas_batch_update`using the median
+    runtime to calculate relative improvement. Save this as `summary.csv`
+    in `bld`.
+    """
+    est_dictionary = {'parameters': ["Curvature \u03B3 of cost function", "Level k of cost of effort", "Intrinsic motivation s","Probability weighting \u03C0 (1%) (in %)", "Curvature of utility over piece rate"]}
+
+    for i in ['pow','exp']:
+        with open(depends_on[f'bench {i}'], "r") as stream:
+            temp = yaml.safe_load(stream)
+            est_dictionary[f'{i}_est'] = temp['estimates'] 
+            est_dictionary[f'{i}_se'] = temp['std dev']
+        with open(depends_on[f'noweight {i}'], "r") as stream:
+            temp = yaml.safe_load(stream)
+            est_dictionary[f'{i}_est'] += temp['estimates'][3:] 
+            est_dictionary[f'{i}_se'] += temp['std dev'][3:]
+
+    est_DF = pd.DataFrame.from_dict(est_dictionary)
+    with open(produces, "w", encoding="utf-8") as y:
+        est_DF.to_csv(y)
