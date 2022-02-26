@@ -66,7 +66,7 @@ def task_compare_opt_pow(depends_on, produces):
     }
 )
 @pytask.mark.produces(BLD / "tables" / "table_nls_noweight_behavioral.csv")
-def task_nls_est_behavioral(depends_on, produces):
+def task_nls_noweight_behavioral(depends_on, produces):
     """Load all the runtime information, combine it into a DataFrame with
     one column per function and also calculate the relative speedup of
     each version compared to `pandas_batch_update`using the median
@@ -103,7 +103,7 @@ def task_nls_est_behavioral(depends_on, produces):
     }
 )
 @pytask.mark.produces(BLD / "tables" / "table_nls_probweight_behavioral.csv")
-def task_nls_est_behavioral(depends_on, produces):
+def task_nls_probweight_behavioral(depends_on, produces):
     """Load all the runtime information, combine it into a DataFrame with
     one column per function and also calculate the relative speedup of
     each version compared to `pandas_batch_update`using the median
@@ -113,14 +113,18 @@ def task_nls_est_behavioral(depends_on, produces):
     est_dictionary = {'parameters': ["Curvature \u03B3 of cost function", "Level k of cost of effort", "Intrinsic motivation s","Probability weighting \u03C0 (1%) (in %)", "Curvature of utility over piece rate"]}
 
     for i in ['pow','exp']:
-        with open(depends_on[f'bench {i}'], "r") as stream:
+        with open(depends_on[f'lin curv {i}'], "r") as stream:
             temp = yaml.safe_load(stream)
-            est_dictionary[f'{i}_est'] = temp['estimates'] 
-            est_dictionary[f'{i}_se'] = temp['std dev']
-        with open(depends_on[f'noweight {i}'], "r") as stream:
+            est_dictionary[f'{i}_est1'] = temp['estimates'] + [1]
+            est_dictionary[f'{i}_se1'] = temp['std dev'] + [0]
+        with open(depends_on[f'conc curv {i}'], "r") as stream:
             temp = yaml.safe_load(stream)
-            est_dictionary[f'{i}_est'] += temp['estimates'][3:] 
-            est_dictionary[f'{i}_se'] += temp['std dev'][3:]
+            est_dictionary[f'{i}_est2'] = temp['estimates'] + [0.88]
+            est_dictionary[f'{i}_se2'] = temp['std dev'] + [0]
+        with open(depends_on[f'estimated curv {i}'], "r") as stream:
+            temp = yaml.safe_load(stream)
+            est_dictionary[f'{i}_est3'] = temp['estimates'] 
+            est_dictionary[f'{i}_se3'] = temp['std dev']
 
     est_DF = pd.DataFrame.from_dict(est_dictionary)
     with open(produces, "w", encoding="utf-8") as y:
