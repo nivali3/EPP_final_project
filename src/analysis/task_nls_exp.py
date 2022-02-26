@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import scipy.optimize as opt
 import pytask
+import yaml
 
 from functools import partial
 
@@ -50,7 +51,7 @@ def create_inputs(dt):
 
  
 @pytask.mark.depends_on(BLD / "data" / "nls_data.csv")
-@pytask.mark.produces(BLD / "analysis" / "est_benchmark_exp.csv")
+@pytask.mark.produces(BLD / "analysis" / "est_benchmark_exp.yaml")
 def task_opt_benchmark_exp(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result.
     
@@ -64,17 +65,19 @@ def task_opt_benchmark_exp(depends_on, produces):
     be54 = sol[0]                      # sol[0] is the array containing our estimates
     se54 = np.sqrt(np.diagonal(sol[1]))  # sol[1] is a 3x3 variance-covariance matrix of our estimates
 
-    final = {'estimates' : be54,
-        'variances' : se54}
+    final = {'estimates' : be54.tolist(),
+        'std dev' : se54.tolist()}
 
-    final = pd.DataFrame(final)
+    #final = pd.DataFrame(final)
 
-    with open(produces, "w") as f:
-        final.to_csv(f, index=False)
+    #with open(produces, "w") as f:
+    #    final.to_csv(f, index=False)
+    with open(produces, "w") as y:
+        yaml.dump(final, y)
 
 
 @pytask.mark.depends_on(BLD / "data" / "nls_data.csv")
-@pytask.mark.produces(BLD / "analysis" / "est_noweight_exp.csv")
+@pytask.mark.produces(BLD / "analysis" / "est_noweight_exp.yaml")
 def task_opt_noweight_exp(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result.
     
@@ -91,17 +94,19 @@ def task_opt_noweight_exp(depends_on, produces):
     be56 = sol[0]
     se56 = np.sqrt(np.diagonal(sol[1]))
 
-    final = {'estimates' : be56,
-        'variances' : se56}
+    final = {'estimates' : be56.tolist(),
+        'std dev' : se56.tolist()}
 
-    final = pd.DataFrame(final)
+    #final = pd.DataFrame(final)
 
-    with open(produces, "w") as f:
-        final.to_csv(f, index=False)
+    #with open(produces, "w") as f:
+    #   final.to_csv(f, index=False)
+    with open(produces, "w") as y:
+        yaml.dump(final, y)
 
 
 @pytask.mark.depends_on(BLD / "data" / "nls_data.csv")
-@pytask.mark.produces(BLD / "analysis" / "est_weight_exp_lin_curv.csv")
+@pytask.mark.produces(BLD / "analysis" / "est_weight_exp_lin_curv.yaml")
 def task_opt_weight_exp_lin_curv(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result.
     
@@ -120,17 +125,19 @@ def task_opt_weight_exp_lin_curv(depends_on, produces):
     be64 = sol[0] 
     se64 = np.sqrt(np.diagonal(sol[1])) 
 
-    final = {'estimates' : be64,
-        'variances' : se64}
+    final = {'estimates' : be64.tolist(),
+        'std dev' : se64.tolist()}
 
-    final = pd.DataFrame(final)
+    #final = pd.DataFrame(final)
 
-    with open(produces, "w") as f:
-        final.to_csv(f, index=False)
+    #with open(produces, "w") as f:
+    #    final.to_csv(f, index=False)
+    with open(produces, "w") as y:
+        yaml.dump(final, y)
 
 
 @pytask.mark.depends_on(BLD / "data" / "nls_data.csv")
-@pytask.mark.produces(BLD / "analysis" / "est_weight_exp_conc_curv.csv")
+@pytask.mark.produces(BLD / "analysis" / "est_weight_exp_conc_curv.yaml")
 def task_opt_weight_exp_conc_curv(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result.
     
@@ -149,17 +156,19 @@ def task_opt_weight_exp_conc_curv(depends_on, produces):
     be65 = sol[0]
     se65 = np.sqrt(np.diagonal(sol[1])) 
 
-    final = {'estimates' : be65,
-        'variances' : se65}
+    final = {'estimates' : be65.tolist(),
+        'std dev' : se65.tolist()}
 
-    final = pd.DataFrame(final)
+    #final = pd.DataFrame(final)
 
-    with open(produces, "w") as f:
-        final.to_csv(f, index=False)
+    #with open(produces, "w") as f:
+    #    final.to_csv(f, index=False)
+    with open(produces, "w") as y:
+        yaml.dump(final, y)
 
 
 @pytask.mark.depends_on(BLD / "data" / "nls_data.csv")
-@pytask.mark.produces(BLD / "analysis" / "est_weight_exp_est_curv.csv")
+@pytask.mark.produces(BLD / "analysis" / "est_weight_exp_est_curv.yaml")
 def task_opt_weight_exp_est_curv(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result.
     
@@ -176,10 +185,12 @@ def task_opt_weight_exp_est_curv(depends_on, produces):
     be66 = sol[0]
     se66 = np.sqrt(np.diagonal(sol[1])) 
 
-    final = {'estimates' : be66,
-        'variances' : se66}
+    final = {'estimates' : be66.tolist(),
+        'std dev' : se66.tolist()}
 
-    final = pd.DataFrame(final)
+    #final = pd.DataFrame(final)
 
-    with open(produces, "w") as f:
-        final.to_csv(f, index=False)
+    #with open(produces, "w") as f:
+    #    final.to_csv(f, index=False)
+    with open(produces, "w") as y:
+        yaml.dump(final, y)
