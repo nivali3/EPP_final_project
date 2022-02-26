@@ -226,4 +226,62 @@ def task_opt_weight_pow_est_curv(depends_on, produces):
 
 
 
+def noweight_power_trial(args, alpha, a, gift, beta, delta, g, k, s):
+    
+    pay100 = args['payoff_per_100']
+    gd = args['gift_dummy']
+    dd = args['delay_dummy']
+    dw = args['delay_wks']
+    paychar = args['payoff_charity_per_100']
+    dc = args['charity_dummy']
+    
+    check1= max(k, 1e-115)
+    check2= np.maximum(s + gift*0.4*gd + (beta**dd)*(delta**dw)*pay100 + alpha*paychar + a*0.01*dc, 1e-10)  
+    f_x = (-1/g * np.log(check1) + 1/g*np.log(check2))
+    
+    return f_x
+
+@pytask.mark.depends_on({
+    "main" : BLD/'data'/'nls_data.csv',
+    "bench" : BLD/'analysis'/'est_benchmark_pow.yaml'})
+@pytask.mark.produces(BLD/'analysis'/'est_noweight_pow_trial.yaml')
+def task_opt_noweight_pow_trial(depends_on, produces):
+    """Measure the runtime of pandas_batch_update and save the result."""
+
+    dt = pd.read_csv(depends_on["main"])
+    
+    with open(depends_on["bench"], "r") as stream:
+        temp = yaml.safe_load(stream)
+
+    input = create_inputs(dt)
+    args = input['samplenw']
+    
+    _partial_aut = partial(noweight_power_trial, g=20.546, k=5.12e-70, s=3.17e-06)
+    _partial = partial(noweight_power_trial, g=temp['estimates'][0], k=temp['estimates'][1], s=temp['estimates'][2]) 
+    sol = opt.curve_fit(_partial,
+                    args,
+                    dt.loc[dt['samplenw']==1].logbuttonpresses_nearest_100,
+                    stvale_spec)
+    bp53 = sol[0]
+    sp53 = np.sqrt(np.diagonal(sol[1]))
+
+    sol_aut = opt.curve_fit(_partial_aut,
+                    args,
+                    dt.loc[dt['samplenw']==1].logbuttonpresses_nearest_100,
+                    stvale_spec)
+    bp53_aut = sol[0]
+    sp53_aut = np.sqrt(np.diagonal(sol[1]))
+
+    final = {'estimates' : bp53.tolist(),
+        'authors estimates' : bp53_aut.tolist(),
+        'std dev': sp53.tolist(),
+        'authors std dev': sp53_aut.tolist()}
+
+    #final = pd.DataFrame(final)
+
+    #with open(produces, "w") as f:
+    #    final.to_csv(f, index=False)
+    with open(produces, "w") as y:
+        yaml.dump(final, y)
+
 
