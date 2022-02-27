@@ -8,9 +8,9 @@ from src.config import BLD
 
 @pytask.mark.depends_on(
     {
-        "curve_fit": BLD / "analysis" / "est_benchmark_pow.yaml", 
-        "least_square": BLD / "analysis" / "est_benchmark_pow_alt1.yaml",
-        "minimize_nd": BLD / "analysis" / "est_benchmark_pow_alt2.yaml"
+        "curve fit": BLD / "analysis" / "est_benchmark_pow.yaml", 
+        "least square": BLD / "analysis" / "est_benchmark_pow_alt1.yaml",
+        "minimize": BLD / "analysis" / "est_benchmark_pow_alt2.yaml"
     }
 )
 @pytask.mark.produces(BLD / "tables" / "table_pow_comparison.csv")
@@ -45,10 +45,11 @@ def task_compare_opt_pow(depends_on, produces):
 
         with open(values, "r") as stream:
             temp = yaml.safe_load(stream)
-            est_dictionary[name] = temp['estimates'] + [temp['min obj func']]
-    est_dictionary['authors'] = [20.546,5.12e-13,3.17, 672.387]
+            est_dictionary[name] = list(np.round(temp['estimates'], 3)) + list(np.round([temp['min obj func']], 3))
+    est_dictionary['authors'] = np.round([20.546,5.12e-13,3.17, 672.387], 3)
 
     est_DF = pd.DataFrame.from_dict(est_dictionary)
+    est_DF.set_index('parameters', inplace=True)
 
     #with open(produces, "w") as y:
     #    yaml.dump(runtimes_dictionary, y)
