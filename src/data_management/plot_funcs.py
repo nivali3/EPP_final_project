@@ -26,14 +26,17 @@ def data_plot_fig_3(dt):
 def plot_CDF(dt, treat_names): #treat_names is a list from treatmentname column
     line_styles = ['-','--','-.',':','-.']
     colors = ['blue','red','green','orange','cyan']
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
     for i,j in enumerate(treat_names):
         treat_outcome = dt[dt['treatmentname']==j]['buttonpresses']
         x = np.sort(treat_outcome) #sort the data in ascending order
         y = np.arange(len(treat_outcome)) / len(treat_outcome) #get the cdf values of y
-        plt.plot(x, y, color=colors[i], ls=line_styles[i], label=j)
-    plt.xlim([0, 3100])
-    plt.xlabel('Points in Task')
-    plt.ylabel('Cumulative Fraction')
-    plt.title("CDF of MTurk Workers' effort")
-    plt.legend(loc='best', bbox_to_anchor=(0.8,-0.2),ncol=2)
+
+        ax.plot(x, y, color=colors[i], ls=line_styles[i])
+    ax.set_xlim([0, 3100])
+    ax.set_xlabel('Points in Task')
+    ax.set_ylabel('Cumulative Fraction')
+    ax.set_title("CDF of MTurk Workers' effort")
+    ax.legend(treat_names,loc='best', bbox_to_anchor=(0.8,-0.2),ncol=2)
     
