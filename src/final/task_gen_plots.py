@@ -20,8 +20,10 @@ def task_gen_fig_3(depends_on, produces):
     )
     plt.gca().invert_yaxis()
     plt.title('Button Presses by Treatment (from least to most effective) and Confidence Intervals')
-    plt.savefig(produces)
+    plt.savefig(produces, bbox_inches='tight')
 
+
+'''
 @pytask.mark.depends_on(SRC / "original_data" / "mturk_clean_data_short.dta")
 @pytask.mark.produces(
     {
@@ -38,19 +40,7 @@ def task_gen_figs_4(depends_on, produces):
     plt.savefig(produces['fig_4_b'])
     fig_4_c = plot_CDF(dt, ['Gain 40c','Loss 40c','Gain 80c'])
     plt.savefig(produces['fig_4_c'])
-
-
-
-
-
-
-
-
-
-
-
-
-
+'''
 
 
 
@@ -62,16 +52,20 @@ def task_gen_fig_5(depends_on, produces):
     dt_expert = dt_expert.drop_duplicates(subset='treatmentname', keep="first")
     dt_expert = dt_expert.sort_values('actual')
 
-    plt.errorbar(
+    fig = plt.figure() #figsize=(13, 13)
+    ax = fig.add_subplot(111)
+    ax.errorbar(
         'actual','treatmentname', data=dt_expert,fmt='o', color='Black', elinewidth=3,
         capthick=3,errorevery=1, alpha=1, ms=4, capsize = 5
     )
-    plt.errorbar(
+    ax.errorbar(
         'WoC_forecast','treatmentname', data=dt_expert,fmt='s', color='Orange', elinewidth=3,
         capthick=3,errorevery=1, alpha=1, ms=4, capsize = 5
     )
-    plt.gca().invert_yaxis()
-    plt.title('Actual and Forecasted Button Presses by Treatment')
-    plt.savefig(produces)
+    ax.invert_yaxis()
+    ax.set_title('Actual and Forecasted Button Presses by Treatment')
+    
+    ax.legend(['Actual Effort', 'Forecasts'],loc='best', bbox_to_anchor=(0.8,-0.2),ncol=2)
+    fig.savefig(produces, bbox_inches='tight')
 
 
