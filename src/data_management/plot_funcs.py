@@ -11,13 +11,12 @@ def data_plot_fig_3(dt):
     intervals = []
     means = []
     for i in (frame['treatmentname']):
-        treat_mean = dt[dt['treatmentname']==i]['buttonpresses'].mean()
-        means.append(treat_mean)
-
-        z_critical = stats.norm.ppf(q=0.975)
+        sample_mean = dt[dt['treatmentname']==i]['buttonpresses'].mean()
+        means.append(sample_mean)
         n_size = len(dt[dt['treatmentname']==i])
-        treat_std = dt[dt['treatmentname']==i]['buttonpresses'].std()
-        upper_bound = z_critical*(treat_std/math.sqrt(n_size))
+        t_critical = stats.t.ppf(q=0.975, df=(n_size-1))
+        sample_std = dt[dt['treatmentname']==i]['buttonpresses'].std(ddof=1)
+        upper_bound = t_critical*(sample_std/math.sqrt(n_size))
         intervals.append(upper_bound)
     frame['means'], frame['upper bound ci'] = means, intervals
     return frame.sort_values('means')
