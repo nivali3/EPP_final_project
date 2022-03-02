@@ -54,7 +54,7 @@ def task_gen_fig_5(depends_on, produces):
     dt_expert = dt_expert.drop_duplicates(subset='treatmentname', keep="first")
     dt_expert = dt_expert.sort_values('actual')
     plt.gcf().clear()
-    fig = plt.figure() #figsize=(13, 13)
+    fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.errorbar(
         'actual','treatmentname', data=dt_expert,fmt='o', color='Black', elinewidth=3,
