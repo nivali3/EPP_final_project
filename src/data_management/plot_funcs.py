@@ -7,6 +7,14 @@ import scipy.stats as stats
 import matplotlib.pyplot as plt
 
 def data_plot_fig_3(dt):
+    """Create dataset suitable for replicating Figure 3 of the original paper.
+    Args:
+        dt (dataset): initial data containing actual efforts and treatment identifiers
+ 
+    Returns:
+        (pd.DataFrame): dataset of shape m x 3, where m is the number of treatments. The columns includes the treatment name, the sample mean effort, 
+        the size of the upper bound of the 95% confidence interval for the sample mean.
+    """
     frame = pd.DataFrame(data = dt['treatmentname'].unique(), columns=['treatmentname'])
     intervals = []
     means = []
@@ -23,6 +31,14 @@ def data_plot_fig_3(dt):
 
 
 def plot_CDF(dt, treat_names): #treat_names is a list from treatmentname column
+    """Plot Cumulative Distribution Functions to replicate Figures 4 a) b) c) of the original paper.
+    Args:
+        dt (dataset): initial data containing treatment names, actual efforts, and experts forecasted efforts.
+        treat_names (list): list of treatment names for which we want to plot the CDF of effort
+ 
+    Returns:
+        (plot): plot of the CDF of participants' effort task in each specified treatment.
+    """
     line_styles = ['-','--','-.',':','-.']
     colors = ['blue','red','green','orange','cyan']
     fig = plt.figure()
