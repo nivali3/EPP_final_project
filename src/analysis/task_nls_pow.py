@@ -65,7 +65,10 @@ def task_opt_benchmark_pow_alt1(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result."""
 
     dt = pd.read_csv(depends_on)
-    _partial = partial(benchmark_power_least_squares, dt=dt)
+    pay100 = np.array(dt.loc[dt['dummy1']==1].payoff_per_100)
+    logbuttonpresses = np.array(dt.loc[dt['dummy1']==1].logbuttonpresses_nearest_100)    
+
+    _partial = partial(benchmark_power_least_squares, pay100=pay100, logbuttonpresses=logbuttonpresses)
     sol = opt.least_squares(_partial,
                         st_values_power,
                         xtol=1e-15,
@@ -92,8 +95,10 @@ def task_opt_benchmark_pow_alt2(depends_on, produces):
     """Measure the runtime of pandas_batch_update and save the result."""
 
     dt = pd.read_csv(depends_on)
-    _partial = partial(benchmark_power_opt, dt=dt)
+    pay100 = np.array(dt.loc[dt['dummy1']==1].payoff_per_100)
+    logbuttonpresses = np.array(dt.loc[dt['dummy1']==1].logbuttonpresses_nearest_100)
 
+    _partial = partial(benchmark_power_opt, pay100=pay100, logbuttonpresses=logbuttonpresses)
     sol_opt = opt.minimize(_partial,
                        st_values_power,
                        method='Nelder-Mead',
