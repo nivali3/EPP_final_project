@@ -40,7 +40,8 @@ def no_weight_exp(args, g, k, s, alpha, a, gift, beta, delta):
     and with exponential cost function.
     
     Args:
-        pay100 (pd.Series): the piece rates for all treatments except probability weighting ones
+        args (dict): keys includes treatment dummies, the piece rates for all treatments except probability weighting ones,
+        and the piece rates devolved to charity
         g (float): parameter for curvature of the cost function
         k (float): parameter indicating level of the cost function
         s (float): parameter for intrinsic motivation
@@ -73,7 +74,8 @@ def prob_weight_exp(args, g, k, s, p_weight, curv):
     """Estimates the optimal effort level using the probability weighting model and exponential cost function.
     
     Args:
-        pay100 (pd.Series): the piece rates for all treatments except probability weighting ones
+        args (dict): keys includes treatment dummies, the piece rates for all treatments except probability weighting ones,
+        and the piece rates devolved to charity
         g (float): parameter for curvature of the cost function
         k (float): parameter indicating level of the cost function
         s (float): parameter for intrinsic motivation
