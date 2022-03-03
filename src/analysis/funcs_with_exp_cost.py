@@ -1,12 +1,12 @@
-"""TO BE FIXED Functions for the predict step of a square root unscented Kalman filter.
+"""Functions to estimate the optimal effort level with exponential cost and specified models, namely:
 
-TO BE FIXED The functions use pandas for most of the calculations. This means that for
-most operations the order of columns or the index is irrelevant. Nevertheless,
-the order might be relevant whenever matrix factorizations are involved!
+- benchmark (i.e. monetary incentive treatments), which includes treatments 1.1 ('1c PieceRate'), 1.2 ('10c PieceRate'), 1.3 ('No Payment');
 
-the benchmark model - the model for treatments 1. 1, 1.2, and 1.3
-using the costly effort model with exponential cost function
+- behavioral (i.e. extension from the benchmark by adding behavioral parameters), which additionally includes treatments
+3.1 ('1c RedCross'), 3.2 ('10c RedCross'), 4.1 ('1c 2Wks'), 4.2 ('1c 4Wks'), 10 ('Gift Exchange');
 
+- probability weighting (i.e. extension from the benchmark by adding probability weighting parameters), which additionally includes treatments
+6.1 ('Prob.01 $1'), 6.2 ('Prob.5 2c').
 """
 
 import numpy as np
@@ -27,8 +27,8 @@ def benchmark_exp(pay100, g, k, s):
 
     """
     
-    assert k > 0, "Only positive quantities allowed for *k*."
-    assert (s + pay100) > 0, "Only positive quantities allowed for the sum of *s* and *pay100*."
+    assert k > 0, "Only positive quantities are allowed to enter log."
+    assert (s + pay100) > 0, "Only positive quantities are allowed to enter log."
 
     estimated_effort = (-1/g * np.log(k) +1/g * np.log(s + pay100))
     
@@ -36,7 +36,7 @@ def benchmark_exp(pay100, g, k, s):
 
 
 def no_weight_exp(args, g, k, s, alpha, a, gift, beta, delta):
-    """Estimates the optimal effort level using the general model without probability weighting 
+    """Estimates the optimal effort level using the behavioral model without probability weighting 
     and with exponential cost function.
     
     Args:
@@ -62,16 +62,15 @@ def no_weight_exp(args, g, k, s, alpha, a, gift, beta, delta):
     paychar = args['payoff_charity_per_100']
     dc = args['charity_dummy']
     
-    check1 = k
-    check2 = s + gift*0.4*gd + (beta**dd)*(delta**dw)*pay100 + alpha*paychar +a*0.01*dc
-    estimated_effort = (-1/g * np.log(check1) + 1/g*np.log(check2))
+    assert k > 0, "Only positive quantities are allowed to enter log."
+    assert (s + gift*0.4*gd + (beta**dd)*(delta**dw)*pay100 + alpha*paychar +a*0.01*dc)>0, "Only positive quantities are allowed to enter log."
+    estimated_effort = (-1/g * np.log(k) + 1/g*np.log(s + gift*0.4*gd + (beta**dd)*(delta**dw)*pay100 + alpha*paychar +a*0.01*dc)), "Only positive quantities are allowed to enter log."
     
     return estimated_effort
 
 
 def prob_weight_exp(args, g, k, s, p_weight, curv):
-    """Estimates the optimal effort level using the general model with probability weighting 
-    and exponential cost function.
+    """Estimates the optimal effort level using the probability weighting model and exponential cost function.
     
     Args:
         pay100 (pd.Series): the piece rates for all treatments except probability weighting ones
@@ -90,9 +89,9 @@ def prob_weight_exp(args, g, k, s, p_weight, curv):
     wd = args['weight_dummy']
     prob = args['prob']
     
-    check1=k
-    check2=s + p_weight**wd*prob*pay100**curv
+    assert k>0, "Only positive quantities are allowed to enter log." 
+    assert (s + p_weight**wd*prob*pay100**curv)>0, "Only positive quantities are allowed to enter log."
     
-    f_x = (-1/g * np.log(check1) + 1/g*np.log(check2))
+    estimated_effort = (-1/g * np.log(k) + 1/g*np.log(s + p_weight**wd*prob*pay100**curv))
     
-    return f_x
+    return estimated_effort
