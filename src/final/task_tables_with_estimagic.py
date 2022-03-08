@@ -33,13 +33,13 @@ def task_estimagic_nls_benchmark(depends_on, produces):
             temp = yaml.safe_load(stream)
             
             est_dictionary[f'{i}_est'] = temp['estimates'] 
-            est_dictionary[f'{i}_se'] = temp['std err']
+            est_dictionary[f'{i}_se'] = temp['bootstrap_se']
 
 
 
     est_DF = pd.DataFrame.from_dict(est_dictionary)
     est_DF.set_index('parameters', inplace=True)
-    est_DF.columns = pd.MultiIndex.from_product([['neldermead','ls_trf','ls_dogbox'], ['pow_est','exp_est']])
+    est_DF.columns = pd.MultiIndex.from_product([['neldermead','ls_trf','ls_dogbox'], ['pow_est','pow_se','exp_est','exp_se']])
 
     with open(produces, "w", encoding="utf-8") as y:
         est_DF.to_csv(y)
@@ -72,12 +72,12 @@ def task_estimagic_nls_behavioral(depends_on, produces):
             temp = yaml.safe_load(stream)
             
             est_dictionary[f'{i}_est'] = temp['estimates'] 
-            est_dictionary[f'{i}_se'] = temp['std err']
+            est_dictionary[f'{i}_ci'] = temp['bootstrap_ci']
 
 
     est_DF = pd.DataFrame.from_dict(est_dictionary)
     est_DF.set_index('parameters', inplace=True)
-    est_DF.columns = pd.MultiIndex.from_product([['neldermead','ls_trf','ls_dogbox'], ['pow_est','exp_est']])
+    est_DF.columns = pd.MultiIndex.from_product([['neldermead','ls_trf','ls_dogbox'], ['pow_est','pow_ci','exp_est','exp_ci']])
 
     with open(produces, "w", encoding="utf-8") as y:
         est_DF.to_csv(y)
@@ -109,12 +109,12 @@ def task_estimagic_nls_probweight_lin_curv(depends_on, produces):
             temp = yaml.safe_load(stream)
             
             est_dictionary[f'{i}_est'] = temp['estimates'] 
-            est_dictionary[f'{i}_se'] = temp['std err']
+            est_dictionary[f'{i}_se'] = temp['bootstrap_se']
 
 
     est_DF = pd.DataFrame.from_dict(est_dictionary)
     est_DF.set_index('parameters', inplace=True)
-    est_DF.columns = pd.MultiIndex.from_product([['neldermead','ls_trf','ls_dogbox'], ['pow_est','exp_est']],names=['algorithm','linear curvature'])
+    est_DF.columns = pd.MultiIndex.from_product([['neldermead','ls_trf','ls_dogbox'], ['pow_est','pow_se','exp_est','exp_se']],names=['algorithm','linear curvature'])
 
     with open(produces, "w", encoding="utf-8") as y:
         est_DF.to_csv(y)
@@ -146,12 +146,12 @@ def task_estimagic_nls_probweight_conc_curv(depends_on, produces):
             temp = yaml.safe_load(stream)
             
             est_dictionary[f'{i}_est'] = temp['estimates'] 
-            est_dictionary[f'{i}_se'] = temp['std err']
+            est_dictionary[f'{i}_se'] = temp['bootstrap_se']
 
 
     est_DF = pd.DataFrame.from_dict(est_dictionary)
     est_DF.set_index('parameters', inplace=True)
-    est_DF.columns = pd.MultiIndex.from_product([['neldermead','ls_trf','ls_dogbox'], ['pow_est','exp_est']],names=['algorithm','concave curvature'])
+    est_DF.columns = pd.MultiIndex.from_product([['neldermead','ls_trf','ls_dogbox'], ['pow_est','pow_se','exp_est','exp_se']],names=['algorithm','concave curvature'])
 
     with open(produces, "w", encoding="utf-8") as y:
         est_DF.to_csv(y)
@@ -183,12 +183,12 @@ def task_estimagic_nls_probweight_est_curv(depends_on, produces):
             temp = yaml.safe_load(stream)
             
             est_dictionary[f'{i}_est'] = temp['estimates'] 
-            est_dictionary[f'{i}_se'] = temp['std err']
+            est_dictionary[f'{i}_se'] = temp['bootstrap_se']
 
 
     est_DF = pd.DataFrame.from_dict(est_dictionary)
     est_DF.set_index('parameters', inplace=True)
-    est_DF.columns = pd.MultiIndex.from_product([['neldermead','ls_trf','ls_dogbox'], ['pow_est','exp_est']],names=['algorithm','estimated curvature'])
+    est_DF.columns = pd.MultiIndex.from_product([['neldermead','ls_trf','ls_dogbox'], ['pow_est','pow_se','exp_est','exp_se']],names=['algorithm','estimated curvature'])
 
     with open(produces, "w", encoding="utf-8") as y:
         est_DF.to_csv(y)
