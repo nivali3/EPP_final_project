@@ -1,7 +1,6 @@
 """Test to check whether forward moving average is calculated correctly.
 
 """
-from matplotlib.pyplot import axis
 import pandas as pd
 import numpy as np
 
@@ -110,135 +109,111 @@ from pandas.testing import assert_series_equal
 from src.analysis.costly_effort_model_functions import estimated_effort
 
 
-def test_estimated_effort_benchmark_exp():
-    inputs = create_inputs()
-    expected_est_effort = pd.Series(data=[13.916099, 54.692016, 9.600000], index=FACTORS)
-    actual_est_effort = estimated_effort(xdata, *params, scenario='benchmark')
-    assert_series_equal(calc_mean, expected_mean)
+def test_estimated_effort_benchmark():
+    inputs = _create_test_inputs()
+
+    params = inputs['benchmark']['params']
+    x_data = inputs['benchmark']['x_data']
+
+    expected_est_effort = pd.Series(data=[39.02018128, 39.42286802, 40.21864078])
+    actual_est_effort = estimated_effort(x_data, *params, scenario='benchmark')
+
+    assert_series_equal(expected_est_effort, actual_est_effort, check_names=False)
 
 
-def test_estimated_effort_benchmark_pow():
+def test_estimated_effort_no_weight():
+    inputs = _create_test_inputs()
+
+    params = inputs['no_weight']['params']
+    x_data = inputs['no_weight']['x_data']
+
+    expected_est_effort = pd.Series(data=[39.00306244, 39.42447227, 40.06841533])
+    actual_est_effort = estimated_effort(x_data, *params, scenario='no_weight')
+
+    assert_series_equal(expected_est_effort, actual_est_effort, check_names=False)
+
+
+def test_estimated_effort_prob_weight_lin_curv():
+    inputs = _create_test_inputs()
+
+    params = inputs['prob_weight_lin_curv']['params']
+    x_data = inputs['prob_weight_lin_curv']['x_data']
+
+    expected_est_effort = pd.Series(data=[38.89874011709243, 38.93925328608813, 38.89874011709243])
+    actual_est_effort = estimated_effort(x_data, *params, scenario='prob_weight_lin_curv')
+
+    assert_series_equal(expected_est_effort, actual_est_effort, check_names=False)
+
+
+def test_estimated_effort_prob_weight_conc_curv():
     pass
 
 
-def test_estimated_effort_no_weight_exp():
+def test_estimated_effort_prob_weight_est_curv():
     pass
 
 
-def test_estimated_effort_no_weight_pow():
-    pass
+def _create_test_inputs():
 
+    gamma, k, s =  0.02, 1.7, 3.7
 
-def test_estimated_effort_prob_weight_lin_curv_exp():
-    pass
-
-
-def test_estimated_effort_prob_weight_lin_curv_pow():
-    pass
-
-
-def test_estimated_effort_prob_weight_conc_curv_exp():
-    pass
-
-
-def test_estimated_effort_prob_weight_conc_curv_pow():
-    pass
-
-
-def test_estimated_effort_prob_weight_est_curv_exp():
-    pass
-
-
-def test_estimated_effort_prob_weight_est_curv_pow():
-    pass
-
-
-
-def _create_inputs_exp(data):
-
-    gamma_init, k_init, s_init =  0.015645717, 1.69443, 3.69198
-    k_scaler, s_scaler = 1e+16, 1e+6
-
-    alpha_init, a_init, beta_init, delta_init, gift_init = 0.003, 0.13, 1.16, 0.75, 5e-6
-    prob_weight_init = [0.2]
-    curv_init = [0.5]
-
-    benckmark_params = pd.DataFrame([gamma_init, k_init/k_scaler, s_init/s_scaler], columns=["value"])
-    benckmark_params["soft_lower_bound"] = 1e-123
-    benckmark_params["soft_upper_bound"] = 40
-
-    no_weight_params = pd.DataFrame(np.concatenate((
-        [gamma_init, k_init/k_scaler, s_init/s_scaler], 
-        [alpha_init, a_init, gift_init, beta_init, delta_init]
-        )), 
-        columns=["value"])
-    no_weight_params["soft_lower_bound"] = 1e-123
-    no_weight_params["soft_upper_bound"] = 40
-
-    prob_weight_lin_curv_params = pd.DataFrame(np.concatenate((
-        [gamma_init, k_init/k_scaler, s_init/s_scaler], 
-        prob_weight_init
-        )), 
-        columns=["value"])
-    prob_weight_lin_curv_params["soft_lower_bound"] = 1e-123
-    prob_weight_lin_curv_params["soft_upper_bound"] = 40
+    alpha, a, beta, delta, gift = 0.003, 0.13, 1.16, 0.75, 0.0
+    prob_weight = [0.2]
+    curv = [0.5]
     
-    prob_weight_conc_curv_params = pd.DataFrame(np.concatenate((
-        [gamma_init, k_init/k_scaler, s_init/s_scaler], 
-        prob_weight_init
-        )), 
-        columns=["value"])
-    prob_weight_conc_curv_params["soft_lower_bound"] = 1e-123
-    prob_weight_conc_curv_params["soft_upper_bound"] = 40
-
-    prob_weight_est_curv_params = pd.DataFrame(np.concatenate((
-        [gamma_init, k_init/k_scaler, s_init/s_scaler], 
-        prob_weight_init,
-        curv_init
-        )), 
-        columns=["value"])
-    prob_weight_est_curv_params["soft_lower_bound"] = 1e-123
-    prob_weight_est_curv_params["soft_upper_bound"] = 40
-    
-    piece_rates = np.array(data.loc[data['dummy1']==1].payoff_per_100)
-    no_weight_x_data = {'payoff_per_100': data.loc[data['samplenw']==1].payoff_per_100,
-        'gift_dummy': data.loc[data['samplenw']==1].gift_dummy,
-        'delay_dummy': data.loc[data['samplenw']==1].delay_dummy,
-        'delay_wks': data.loc[data['samplenw']==1].delay_wks,
-        'payoff_charity_per_100': data.loc[data['samplenw']==1].payoff_charity_per_100,
-        'charity_dummy': data.loc[data['samplenw']==1].charity_dummy
+    piece_rates = pd.Series(data=[0.01, 0.04, 0.1], name='payoff_per_100')
+    no_weight_x_data = {
+        'payoff_per_100': pd.Series(data=[0.01, 0.04, 0.1]),
+        'gift_dummy': pd.Series(data=[0, 1, 0]),
+        'delay_dummy': pd.Series(data=[1, 0, 1]),
+        'delay_wks': pd.Series(data=[1, 0, 1]),
+        'payoff_charity_per_100': pd.Series(data=[0.01, 0.04, 0.1]),
+        'charity_dummy': pd.Series(data=[0, 0, 1])
     }
-    prob_weight_x_data = {'payoff_per_100': data.loc[data['samplepr']==1].payoff_per_100,
-        'weight_dummy': data.loc[data['samplepr']==1].weight_dummy,
-        'prob': data.loc[data['samplepr']==1].prob
+    prob_weight_x_data = {
+        'payoff_per_100': pd.Series(data=[0.01, 0.04, 0.1]),
+        'weight_dummy': pd.Series(data=[1, 1, 0]),
+        'prob': pd.Series(data=[0.5, 0.5, 0.01])
     }
 
     benchmark = {
-        "params_init": benckmark_params,
+        "params": [gamma, k, s],
         "x_data": piece_rates,
-        "buttonpresses": np.array(data.loc[data['dummy1']==1].buttonpresses_nearest_100)
+        "buttonpresses": pd.Series(data=[25, 100, 200])
         
     }
     no_weight = {
-        "params_init": no_weight_params,
+        "params": np.concatenate((
+            [gamma, k, s], 
+            [alpha, a, gift, beta, delta]
+            )),
         "x_data": no_weight_x_data,
-        "buttonpresses": np.array(data.loc[data['samplenw']==1].buttonpresses_nearest_100)
+        "buttonpresses": pd.Series(data=[25, 100, 200])
         
     }
     prob_weight_lin_curv = {
-        "params_init": prob_weight_lin_curv_params,
+        "params": np.concatenate((
+            [gamma, k, s], 
+            prob_weight
+            )),
         "x_data": prob_weight_x_data,
-        "buttonpresses": np.array(data.loc[data['samplepr']==1].buttonpresses_nearest_100)
+        "buttonpresses": pd.Series(data=[25, 100, 200])
     }
     prob_weight_conc_curv = {
-        "params_init": prob_weight_conc_curv_params,
+        "params": np.concatenate((
+            [gamma, k, s], 
+            prob_weight
+            )),
         "x_data": prob_weight_x_data,
-        "buttonpresses": np.array(data.loc[data['samplepr']==1].buttonpresses_nearest_100)
+        "buttonpresses": pd.Series(data=[25, 100, 200])
     }
     prob_weight_est_curv = {
-        "params_init": prob_weight_est_curv_params,
+        "params": np.concatenate((
+            [gamma, k, s], 
+            prob_weight, curv
+            )),
         "x_data": prob_weight_x_data,
-        "buttonpresses": np.array(data.loc[data['samplepr']==1].buttonpresses_nearest_100)
+        "buttonpresses": pd.Series(data=[25, 100, 200])
     }
 
     out = {
@@ -250,106 +225,6 @@ def _create_inputs_exp(data):
     }
 
     return out
-
-
-def _create_inputs_pow(data):
-
-    gamma_init, k_init, s_init =  19.8117987, 1.66306e-10, 7.74996
-    k_scaler, s_scaler = 1e+57, 1e+6
-
-    alpha_init, a_init, beta_init, delta_init, gift_init = 0.003, 0.13, 1.16, 0.75, 5e-6
-    prob_weight_init = [0.2]
-    curv_init = [0.5]
-
-    benckmark_params = pd.DataFrame([gamma_init, k_init/k_scaler, s_init/s_scaler], columns=["value"])
-    benckmark_params["soft_lower_bound"] = 1e-123
-    benckmark_params["soft_upper_bound"] = 40
-
-    no_weight_params = pd.DataFrame(np.concatenate((
-        [gamma_init, k_init/k_scaler, s_init/s_scaler], 
-        [alpha_init, a_init, gift_init, beta_init, delta_init]
-        )), 
-        columns=["value"])
-    no_weight_params["soft_lower_bound"] = 1e-123
-    no_weight_params["soft_upper_bound"] = 40
-
-    prob_weight_lin_curv_params = pd.DataFrame(np.concatenate((
-        [gamma_init, k_init/k_scaler, s_init/s_scaler], 
-        prob_weight_init
-        )), 
-        columns=["value"])
-    prob_weight_lin_curv_params["soft_lower_bound"] = 1e-123
-    prob_weight_lin_curv_params["soft_upper_bound"] = 40
-    
-    prob_weight_conc_curv_params = pd.DataFrame(np.concatenate((
-        [gamma_init, k_init/k_scaler, s_init/s_scaler], 
-        prob_weight_init
-        )), 
-        columns=["value"])
-    prob_weight_conc_curv_params["soft_lower_bound"] = 1e-123
-    prob_weight_conc_curv_params["soft_upper_bound"] = 40
-
-    prob_weight_est_curv_params = pd.DataFrame(np.concatenate((
-        [gamma_init, k_init/k_scaler, s_init/s_scaler], 
-        prob_weight_init,
-        curv_init
-        )), 
-        columns=["value"])
-    prob_weight_est_curv_params["soft_lower_bound"] = 1e-123
-    prob_weight_est_curv_params["soft_upper_bound"] = 40
-
-    piece_rates = np.array(data.loc[data['dummy1']==1].payoff_per_100)
-    no_weight_x_data = {'payoff_per_100': data.loc[data['samplenw']==1].payoff_per_100,
-        'gift_dummy': data.loc[data['samplenw']==1].gift_dummy,
-        'delay_dummy': data.loc[data['samplenw']==1].delay_dummy,
-        'delay_wks': data.loc[data['samplenw']==1].delay_wks,
-        'payoff_charity_per_100': data.loc[data['samplenw']==1].payoff_charity_per_100,
-        'charity_dummy': data.loc[data['samplenw']==1].charity_dummy
-    }
-    prob_weight_x_data = {'payoff_per_100': data.loc[data['samplepr']==1].payoff_per_100,
-        'weight_dummy': data.loc[data['samplepr']==1].weight_dummy,
-        'prob': data.loc[data['samplepr']==1].prob
-    }
-
-    benchmark = {
-        "params_init": benckmark_params,
-        "x_data": piece_rates,
-        "log_buttonpresses": np.array(data.loc[data['dummy1']==1].logbuttonpresses_nearest_100)
-        
-    }
-    no_weight = {
-        "params_init": no_weight_params,
-        "x_data": no_weight_x_data,
-        "log_buttonpresses": np.array(data.loc[data['samplenw']==1].logbuttonpresses_nearest_100)
-        
-    }
-    prob_weight_lin_curv = {
-        "params_init": prob_weight_lin_curv_params,
-        "x_data": prob_weight_x_data,
-        "log_buttonpresses": np.array(data.loc[data['samplepr']==1].logbuttonpresses_nearest_100)
-    }
-    prob_weight_conc_curv = {
-        "params_init": prob_weight_conc_curv_params,
-        "x_data": prob_weight_x_data,
-        "log_buttonpresses": np.array(data.loc[data['samplepr']==1].logbuttonpresses_nearest_100)
-    }
-    prob_weight_est_curv = {
-        "params_init": prob_weight_est_curv_params,
-        "x_data": prob_weight_x_data,
-        "log_buttonpresses": np.array(data.loc[data['samplepr']==1].logbuttonpresses_nearest_100)
-    }
-
-    out = {
-        "benchmark": benchmark,
-        "no_weight": no_weight,
-        "prob_weight_lin_curv": prob_weight_lin_curv,
-        "prob_weight_conc_curv": prob_weight_conc_curv,
-        "prob_weight_est_curv": prob_weight_est_curv
-    }
-
-    return out
-
-
 
 
 # FACTORS = list("cni")
