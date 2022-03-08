@@ -6,7 +6,7 @@ import yaml
 from src.config import BLD
 import scipy.optimize as opt
 from functools import partial
-
+from src.analysis.utils import create_inputs
 from src.analysis.funcs_with_pow_cost import benchmark_power, benchmark_power_least_squares, benchmark_power_opt, noweight_power, probweight_power
 
 gamma_init_power, k_init_power, s_init_power =  19.8117987, 1.66306e-10, 7.74996
@@ -19,21 +19,6 @@ prob_weight_init = [0.2]
 alpha_init, a_init, beta_init, delta_init, gift_init = 0.003, 0.13, 1.16, 0.75, 5e-6
 stvale_spec = [alpha_init, a_init, gift_init, beta_init, delta_init]
 
-def create_inputs(dt):
-    out={}
-    out['samplenw'] = {'payoff_per_100': dt.loc[dt['samplenw']==1].payoff_per_100,
-        'gift_dummy': dt.loc[dt['samplenw']==1].gift_dummy,
-        'delay_dummy': dt.loc[dt['samplenw']==1].delay_dummy,
-        'delay_wks': dt.loc[dt['samplenw']==1].delay_wks,
-        'payoff_charity_per_100': dt.loc[dt['samplenw']==1].payoff_charity_per_100,
-        'charity_dummy': dt.loc[dt['samplenw']==1].charity_dummy
-    }
-    out['samplepr'] = {'payoff_per_100': dt.loc[dt['samplepr']==1].payoff_per_100,
-        'weight_dummy': dt.loc[dt['samplepr']==1].weight_dummy,
-        'prob': dt.loc[dt['samplepr']==1].prob
-    }
-
-    return out
 
 
 # fix depends on 
