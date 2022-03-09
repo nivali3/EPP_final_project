@@ -1,11 +1,42 @@
+"""Functions from the costly effort model with exponential and power cost
+functions for five different scenarios, namely:
+
+benchmark (i.e. monetary incentive treatments), which includes
+treatments 1.1 ('1c PieceRate'), 1.2 ('10c PieceRate'), 1.3 ('No Payment');
+
+behavioral (i.e. extension from the benchmark by adding behavioral 
+parameters), which additionally includes treatments 3.1 ('1c RedCross'),
+3.2 ('10c RedCross'), 4.1 ('1c 2Wks'), 4.2 ('1c 4Wks'), 10 ('Gift Exchange');
+
+probability weighting with linear, concave, and estimated curvature parameter 
+of the value function (i.e. extension from the benchmark by adding probability
+weighting parameters), which additionally includes treatments 6.1
+('Prob.01 $1'), 6.2 ('Prob.5 2c').
+
+"""
+
 import numpy as np
 
 
 def estimated_effort(xdata, *params, scenario):
-    """
-    scenario : 'benchmark' or 'no_weight' or 'prob_weight'
+    """Calculates optimal effort under exponential cost assumption and
+    log of optimal effort under power cost assumption for corresponding scenario.
+
+    Args:
+        xdata (dict): keys are the names of the corresponding columns of the
+            data and values (pd.Series) are column values for each scenario
+        *params (float): parameters of the model under
+            corresponding scenario (e.g. g, k, s under 'benchmark')
+        scenario (string): 'benchmark'; 'no_weight' for behavioral; 
+            'prob_weight_lin_curv', 'prob_weight_conc_curv', or 
+            'prob_weight_est_curv' for probability weighting with linear,
+            concave, or estimated curvature parameter, respectively
+
+    Returns:
+        estimated_effort (float)
 
     """
+
     if scenario == 'benchmark':
 
         g, k, s = params
@@ -70,8 +101,20 @@ def estimated_effort(xdata, *params, scenario):
 
 
 def sqrd_residuals_benchmark(params, xdata, logbuttonpresses, optimizer):
-    """
-    scenario : 'opt.least_squares' or 'opt.minimize'
+    """Calculates squared residuals for opt.least_squares optimizer and
+    sum of squared residuals for opt.minimize optimizer under benchmark
+    scenario with power cost.
+
+    Args:
+        params (list): benchmark parameters
+        xdata (pd.Series): the piece rates for benchmark treatments
+        logbuttonpresses (array): log of actual efforts
+        optimizer (string): the name of the optimizer using this function:
+            in this case, opt.least_squares or opt.minimize
+
+    Returns:
+        sqrd_resid (array): if optimizer is opt.least_squares
+        sum_sqrd_resid (float): otherwise
 
     """
     
@@ -87,4 +130,3 @@ def sqrd_residuals_benchmark(params, xdata, logbuttonpresses, optimizer):
     else:
         sum_sqrd_resid = np.sum(((-1/g * np.log(comp_1) +1/g * np.log(comp_2))-logbuttonpresses)**2)
         return sum_sqrd_resid
-

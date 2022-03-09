@@ -1,12 +1,38 @@
+"""Function from the costly effort model written to be used by minimize()
+function of the Python package, estimagic.
+
+This function is written based on the function structures from 
+`model_function.py` file and in the structure required by minimize() function.
+
+"""
+
 import numpy as np
 
 
-# def sqrd_residuals_estimagic(xdata, *params, scenario):
 def sqrd_residuals_estimagic(params, xdata, buttonpresses, scenario):
-    """
-    scenario : 'benchmark' or 'no_weight' or 'prob_weight'
+    """The criterion function calculating the residuals and sum of their
+    squares from the model of costly effort.
+
+    Args:
+        params (pandas.DataFrame): DataFrame with the columns
+            "value", "lower_bound", "upper_bound" for the parameters of
+            the model and bounds on them under corresponding scenario.
+        xdata (dict): keys are the names of the corresponding columns of the
+            data and values (pd.Series) are column values for each scenario
+        buttonpresses (np.array): actual efforts for ecponential cost
+            and log of actual efforts for power cost
+        scenario (string): 'benchmark'; 'no_weight' for behavioral; 
+            'prob_weight_lin_curv', 'prob_weight_conc_curv', or 
+            'prob_weight_est_curv' for probability weighting with linear,
+            concave, or estimated curvature parameter, respectively
+
+    Returns:
+        dict: A dictionary with the entries "value" for sum of squared
+            residuals and "root_contributions" (np.array) for the residuals
+            of the least squares problem
 
     """
+
     if scenario == 'benchmark':
 
         g, k, s = params['value']
