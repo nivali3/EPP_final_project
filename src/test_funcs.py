@@ -2,9 +2,10 @@
 '''
 
 import pandas as pd
+import numpy as np
 from pandas.testing import assert_series_equal
 
-from src.analysis.costly_effort_model_functions import estimated_effort
+from src.model_code.model_function import estimated_effort
 
 
 def test_estimated_effort_benchmark():
