@@ -8,14 +8,15 @@
 \usepackage{fancyvrb, moreverb, relsize}
 \usepackage{eurosym, calc}
 % \usepackage{chngcntr}
-\usepackage{amsmath, amssymb, amsfonts, amsthm, bm}
-\usepackage{caption}
+\usepackage{amsmath, amssymb, amsfo\usepackage{caption}
+nts, amsthm, bm}
 \usepackage{mdwlist}
 \usepackage{xfrac}
 \usepackage{setspace}
 \usepackage{xcolor}
 \usepackage{subcaption}
 \usepackage{minibox}
+\usepackage{booktabs}
 % \usepackage{pdf14} % Enable for Manuscriptcentral -- can't handle pdf 1.5
 % \usepackage{endfloat} % Enable to move tables / figures to the end. Useful for some submissions.
 
@@ -63,12 +64,12 @@
 
 \begin{document}
 
-\title{Structural Behavioral Economics (Dellavigna, Pope 2018) using Estimagic\thanks{Edoardo Falchi, Nigar Valiyeva, Bonn University. Email: \href{mailto:s6nivali@uni-bonn.de}{\nolinkurl{s6nivali [at] uni-bonn [dot] de}}.}}
+\title{Structural Behavioral Economics (Della Vigna, Pope 2018) using Estimagic\thanks{Edoardo Falchi, Nigar Valiyeva, Bonn University. Email: \href{mailto:s6nivali@uni-bonn.de}{\nolinkurl{s6nivali [at] uni-bonn [dot] de}}.}}
 
 \author{Edoardo Falchi, Nigar Valiyeva}
 
 \date{
-    {\bf Preliminary -- please do not quote}
+    %{\bf Preliminary -- please do not quote}
     \\[1ex]
     \today
 }
@@ -77,37 +78,114 @@
 
 
 \begin{abstract}
-    Some abstract here.
+    This project\footnote{This project has been build based on a template by \cite{GaudeckerEconProjectTemplates}.} replicates part of the main results from \cite{dellavigna2018motivates}, specifically focusing on structural estimates using non linear least squares (NLS). The starting point from which we build upon our codes is the replication of the mentioned paper by \cite{PozziNunnari} from Bocconi University\footnote{Their repo is publicly available at \url{https://github.com/MassimilianoPozzi/python_julia_structural_behavioral_economics}}. Our goal is to improve on that by putting emphasis on programming best-practices and applying concepts learned in the course "Effective Programming Practices for Economists", such as Pytask, Pytest, Estimagic \citep{Gabler2021}, Sphinx, functional programming and docstrings. 
 \end{abstract}
 \clearpage
 
 \section{Introduction} % (fold)
 \label{sec:introduction}
+Authors' research question is: \emph{"How much do different monetary and non-monetary motivators induce costly effort?"}. They conducted a large-scale real-effort experiment with eighteen treatment arms in which participants' task is to alternately press the “a” and “b” buttons on their keyboards as quickly as possible for ten minutes. They investigated the effect of standard incentives alone and together with behavioral economics components.
 
-If you are using this template, please cite this item from the references: \citet{GaudeckerEconProjectTemplates}
+\section{Brief model overview \footnote{This section is taken from the corresponding part in \cite{PozziNunnari} notebook.}}
+\label{sec:model}
+The model is one of costly effort, where an agent needs to choose the optimal effort to solve a tradeoff problem between disutility of effort and consumption utility derived from the consequent payment. With a total of 18 different treatments, the authors estimates several parameters derived from three benchmark treatments with standard incentives and fifteen treatments with social preferences, time preferences, and prospect theory probability weighting. Here we briefly outline the benchmark model and the solutions found when using non-linear-least-squares:
+$$
+\max _{e \geq 0}(s+p) e-c(e)
+$$
+Where $e$ is the number of buttons pressed, $p$ is the piece-rate that varies across treatments, $s$ is a parameter that captures intrinsic motivation, and $c(e)$ is an heterogeneous convex cost function, either of power or exponential form:
+$$
+c(e)=\frac{k e^{1+\gamma}}{1+\gamma} \exp \left(-\gamma \epsilon_{j}\right) \quad c(e)=\frac{\operatorname{kexp}(\gamma e)}{\gamma} \exp \left(-\gamma \epsilon_{j}\right)
+$$
+The variable $\epsilon_{j}$ is normally distributed, $\epsilon_{j}\sim N(0,\sigma_{j}$, so that the additional noise term $-\gamma \epsilon_{j}$ has a lognormal distribution. The first order condition implied by the maximization problem after taking logs is the following:
+$$
+\log \left(e_{j}\right)=\frac{1}{\gamma}[\log (s+p)-\log (k)]+\epsilon_{j} \quad e_{j}=\frac{1}{\gamma}[\log (s+p)-\log (k)]+\epsilon_{j}
+$$
+where the first equation assumes a power cost function and the second equation assumes an exponential cost function. By using non-linear-least-squares, our goal is to minimize the sum of squared distances between the observed effort and the optimal effort computed above, namely:
+$$
+\min \sum_{j=1}^{J}\left(y_{j}-f\left(x_{j}, \theta\right)\right)^{2}
+$$
+where $j$ is a generic individual observation, $y$ is the observed effort, and $f(x_{j}, \theta)$ is the function which computes the optimal effort (the first order condition) depending on the data and a set of parameters $\theta$.
 
-\citet{Schelling69} example in the code is taken from \citet{StachurskiSargent13}
+\section{Replication and Extension}
+\label{sec:repl}
+We replicate panel A and B of Table 5 and panel A of Table 6 of the original paper, in which we report our computed NLS estimates and standard errors. To extend from \citet{PozziNunnari} -who only report non robust standard errors- we compute bootstrapped standard error with the Estimagic\footnote{we tried to enable the 'multistart' and 'scaling' options but we could not obtain results closer to the ones of the original authors.} package using three different optimization algorithms, namely `scipy\_ls\_trf` and `scipy\_ls\_dogbox` (derivative-based least squares optimizers), and `scipy\_neldermead` (derivative-free direct search method). Furthermore, we replicate Figures 3, 4(a-b-c), 5 of the original paper.
 
-The decision rule of an agent is the following:
-\input{formulas/decision_rule}
+\subsection{Tables}
+\subsubsection{Parameters estimation without Estimagic}
 
-\begin{figure}
-    \caption{Segregation by cycle in the baseline \citet{Schelling69} model as in the \citet{StachurskiSargent13} example}
+\begin{table}[H]
+\input{..\..\bld\paper\table_pow_comparison.tex}
+\caption{Parameters estimation comparison using three different optimization algorithms for the benchmark case with power cost function.}
+\end{table}
 
-    \includegraphics[width=\textwidth]{../../bld/figures/schelling_baseline}
+\begin{table}[H]
+\scalebox{0.8}{\input{..\..\bld\paper\table_nls_noweight_behavioral.tex}}
+\caption{Behavioral treatments parameters with no probability weighting. Columns (2)-(3) and columns (4)-(5) report estimates and standard errors with power and exponential cost function, respectively.}
+\end{table}
 
+\begin{table}[H]
+\scalebox{0.4}{\input{..\..\bld\paper\table_nls_probweight_behavioral.tex}}
+\caption{Behavioral treatments parameters with probability weighting. Estimates and standard errors with linear (columns 2-3-8-9), concave (columns 4-5-10-11), and estimated (columns 6-7-12-13) curvature of value function.}
+\end{table}
+
+
+\subsubsection{Parameters estimation with Estimagic}
+
+\begin{table}[H]
+\scalebox{0.4}{\input{..\..\bld\paper\table_estimagic_nls_benchmark.tex}}
+\caption{Benchmark treatments parameters. The table reports estimates and bootstrapped standard errors using three different optimization algorithms: `neldermead` (columns from 2 to 5), `ls\_trf` (columns from 6 to 9), `ls\_dogbox` (columns from 10 to 13).}
+\end{table}
+
+\begin{table}[H]
+\scalebox{0.4}{\input{..\..\bld\paper\table_estimagic_nls_noweight_behavioral.tex}}
+\caption{Behavioral treatments parameters with no probability weighting. The table reports estimates and bootstrapped standard errors using three different optimization algorithms: `neldermead` (columns from 2 to 5), `ls\_trf` (columns from 6 to 9), `ls\_dogbox` (columns from 10 to 13).}
+\end{table}
+
+\begin{table}[H]
+\scalebox{0.4}{\input{..\..\bld\paper\table_estimagic_nls_probweight_lin_curv.tex}}
+\caption{Behavioral treatments parameters with probability weighting. The specification
+reports the estimate for a probability weighting coefficient under the assumption of linear value function. The table reports estimates and bootstrapped standard errors using three different optimization algorithms: `neldermead` (columns from 2 to 5), `ls\_trf` (columns from 6 to 9), `ls\_dogbox` (columns from 10 to 13).}
+\end{table}
+
+\begin{table}[H]
+\scalebox{0.4}{\input{..\..\bld\paper\table_estimagic_nls_probweight_conc_curv.tex}}
+\caption{Behavioral treatments parameters with probability weighting. The specification
+reports the estimate for a probability weighting coefficient under the assumption of concave value function with curvature 0.88. The table reports estimates and bootstrapped standard errors using three different optimization algorithms: `neldermead` (columns from 2 to 5), `ls\_trf` (columns from 6 to 9), `ls\_dogbox` (columns from 10 to 13).}
+\end{table}
+
+\begin{table}[H]
+\scalebox{0.4}{\input{..\..\bld\paper\table_estimagic_nls_probweight_est_curv.tex}}
+\caption{Behavioral treatments parameters with probability weighting. The specification
+reports the estimate for a probability weighting coefficient with estimated curvature. The table reports estimates and bootstrapped standard errors using three different optimization algorithms: `neldermead` (columns from 2 to 5), `ls\_trf` (columns from 6 to 9), `ls\_dogbox` (columns from 10 to 13).}
+\end{table}
+
+
+\subsection{Figures}
+
+\begin{figure}[H]
+\includegraphics[scale=0.75]{..\..\bld\figures\figure_3.png}
+\caption{Replication of Figure 3 from \cite{dellavigna2018motivates}}
 \end{figure}
 
-
-\begin{figure}
-    \caption{Segregation by cycle in the baseline \citet{Schelling69} model, limiting the number of potential moves per period to two}
-
-    \includegraphics[width=\textwidth]{../../bld/figures/schelling_max_moves_2}
-
+\begin{figure}[H]
+\includegraphics[scale=0.75]{..\..\bld\figures\figure_4_a.png}
+\caption{Replication of Figure 4 (a) from \cite{dellavigna2018motivates}}
 \end{figure}
 
-% section introduction (end)
+\begin{figure}[H]
+\includegraphics[scale=0.75]{..\..\bld\figures\figure_4_b.png}
+\caption{Replication of Figure 4 (b) from \cite{dellavigna2018motivates}}
+\end{figure}
 
+\begin{figure}[H]
+\includegraphics[scale=0.75]{..\..\bld\figures\figure_4_c.png}
+\caption{Replication of Figure 4 (c) from \cite{dellavigna2018motivates}}
+\end{figure}
+
+\begin{figure}[H]
+\includegraphics[scale=0.75]{..\..\bld\figures\figure_5.png}
+\caption{Replication of Figure 5 from \cite{dellavigna2018motivates}}
+\end{figure}
 
 
 
