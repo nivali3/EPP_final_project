@@ -22,4 +22,4 @@ def task_gen_tex_tables(depends_on, produces):
 
     table = pd.read_csv(depends_on)
     with open(produces, "w", encoding="utf-8") as tf:
-        tf.write(table.to_latex())
+        tf.write(table.to_latex(na_rep="-"))
