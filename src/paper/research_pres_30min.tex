@@ -8,6 +8,7 @@
 \usepackage{fancyvrb, moreverb, relsize}
 \usepackage{eurosym, calc}
 \usepackage{amsmath, amssymb, amsfonts, amsthm, bm}
+\usepackage{booktabs}
 
 \usepackage[
     natbib=true,
@@ -52,13 +53,31 @@
 
 
 \begin{frame}[t]
-    \frametitle{heading here}
+    \frametitle{Introduction}
     \begin{itemize}
-        \item<+-> Please cite this template as: \citet{GaudeckerEconProjectTemplates}
-        \item<+-> \citet{Schelling69} example in the code is taken from \citet{StachurskiSargent13}.
-        \item<+-> The decision rule of an agent is \input{formulas/decision_rule}
+        \item<+-> This project has been build based on a template by \cite{GaudeckerEconProjectTemplates}
+                \item<+-> Structural estimates of behavioral parameters.
+        \item<+-> Original paper reference: \cite{dellavigna2018motivates}
+        \item<+-> Replication reference: \cite{PozziNunnari}
     \end{itemize}
     \note{~}
+\end{frame}
+
+\begin{frame}[t]
+    \frametitle{Tables and Figures}
+    For illustrative purposes, here we report only one table and one figure. All the output files can be accessed in the 'bld/paper/research\_paper.pdf' file once the project is run in your local machine.
+    
+\begin{table}
+\scalebox{0.75}{\input{../../bld/paper/table_pow_comparison.tex}}
+\caption{Parameters estimation comparison using three different optimization algorithms for the benchmark case with power cost function.}
+\end{table}
+\end{frame}
+
+\begin{frame}[t]
+\begin{figure}
+\scalebox{0.75}{\includegraphics[scale=0.8]{../../bld/figures/figure_3.png}}
+\caption{Replication of Figure 3 from \cite{dellavigna2018motivates}}
+\end{figure}
 \end{frame}
 
 
