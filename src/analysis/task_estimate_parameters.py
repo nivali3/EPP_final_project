@@ -285,7 +285,9 @@ def task_estimate_params_benchmark_pow_alt1(depends_on, produces):
     params_init = inputs["benchmark"]["params_init"]
 
     sol = opt.least_squares(
-        lambda params: sqrd_residuals_benchmark(params, xdata=x_data, logbuttonpresses=log_buttonpresses, optimizer='opt.least_squares'),
+        lambda params: sqrd_residuals_benchmark(
+            params, xdata=x_data,
+            logbuttonpresses=log_buttonpresses, optimizer='opt.least_squares'),
         params_init,
         xtol=1e-15,
         ftol=1e-15,
@@ -295,7 +297,9 @@ def task_estimate_params_benchmark_pow_alt1(depends_on, produces):
     
     final = {
         'estimates' : est.tolist(),
-        'min obj func' : (sqrd_residuals_benchmark(est, xdata=x_data, logbuttonpresses=log_buttonpresses, optimizer='opt.minimze')).tolist()
+        'min obj func' : (sqrd_residuals_benchmark(
+            est, xdata=x_data,
+            logbuttonpresses=log_buttonpresses, optimizer='opt.minimze')).tolist()
     }
     with open(produces, "w") as y:
         yaml.dump(final, y)
@@ -318,14 +322,19 @@ def task_estimate_params_benchmark_pow_alt2(depends_on, produces):
     params_init = inputs["benchmark"]["params_init"]
 
     sol = opt.minimize(
-        lambda params: sqrd_residuals_benchmark(params, xdata=x_data, logbuttonpresses=log_buttonpresses, optimizer='opt.minimize'),
+        lambda params: sqrd_residuals_benchmark(
+            params, xdata=x_data,
+            logbuttonpresses=log_buttonpresses, optimizer='opt.minimize'),
         params_init,
         method='Nelder-Mead',
         options={'maxiter': 2500})
     est = sol.x                  
     
     final = {'estimates' : est.tolist(),
-        'min obj func' : (sqrd_residuals_benchmark(est, xdata=x_data, logbuttonpresses=log_buttonpresses, optimizer='opt.minimze')).tolist()
+        'min obj func' : (
+            sqrd_residuals_benchmark(
+                est, xdata=x_data,
+                logbuttonpresses=log_buttonpresses, optimizer='opt.minimze')).tolist()
     }
     with open(produces, "w") as y:
         yaml.dump(final, y)

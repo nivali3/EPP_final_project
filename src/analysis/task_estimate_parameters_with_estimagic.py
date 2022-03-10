@@ -273,7 +273,9 @@ def exp_bootstrap_estimagic(data, scenario, algorithm):
     buttonpresses = inputs[scenario]["buttonpresses"]
     params_init = inputs[scenario]["params_init"]
 
-    _estimagic = partial(sqrd_residuals_estimagic, xdata=x_data, buttonpresses=buttonpresses, scenario = scenario)
+    _estimagic = partial(
+        sqrd_residuals_estimagic,
+        xdata=x_data, buttonpresses=buttonpresses, scenario = scenario)
 
     sol_estimagic = minimize(
         criterion=_estimagic,
@@ -311,7 +313,9 @@ def pow_bootstrap_estimagic(data, scenario, algorithm):
     log_buttonpresses = inputs[scenario]["log_buttonpresses"]
     params_init = inputs[scenario]["params_init"]
 
-    _estimagic = partial(sqrd_residuals_estimagic, xdata=x_data, buttonpresses=log_buttonpresses, scenario = scenario)
+    _estimagic = partial(
+        sqrd_residuals_estimagic,
+        xdata=x_data, buttonpresses=log_buttonpresses, scenario = scenario)
 
     sol_estimagic = minimize(
         criterion=_estimagic,
@@ -349,8 +353,12 @@ def task_estimate_params_exp_estimagic(produces, scenario, algorithm):
     buttonpresses = inputs_exp[scenario]["buttonpresses"]
     params_init = inputs_exp[scenario]["params_init"]
 
-    _estimagic = partial(sqrd_residuals_estimagic, xdata=x_data, buttonpresses=buttonpresses, scenario = scenario)
-    _bootstrap = partial(exp_bootstrap_estimagic, scenario=scenario, algorithm=algorithm)
+    _estimagic = partial(
+        sqrd_residuals_estimagic,
+        xdata=x_data, buttonpresses=buttonpresses, scenario = scenario)
+    _bootstrap = partial(
+        exp_bootstrap_estimagic,
+        scenario=scenario, algorithm=algorithm)
 
     sol_estimagic = minimize(
         criterion=_estimagic,
@@ -385,8 +393,12 @@ def task_estimate_params_pow_estimagic(produces, scenario, algorithm):
     log_buttonpresses = inputs_pow[scenario]["log_buttonpresses"]
     params_init = inputs_pow[scenario]["params_init"]
 
-    _estimagic = partial(sqrd_residuals_estimagic, xdata=x_data, buttonpresses=log_buttonpresses, scenario = scenario)
-    _bootstrap = partial(pow_bootstrap_estimagic, scenario=scenario, algorithm=algorithm)
+    _estimagic = partial(
+        sqrd_residuals_estimagic,
+        xdata=x_data, buttonpresses=log_buttonpresses, scenario = scenario)
+    _bootstrap = partial(
+        pow_bootstrap_estimagic,
+        scenario=scenario, algorithm=algorithm)
 
     sol_estimagic = minimize(
         criterion=_estimagic,
