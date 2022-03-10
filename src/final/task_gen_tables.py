@@ -10,9 +10,9 @@ from src.config import BLD
 
 @pytask.mark.depends_on(
     {
-        "curve fit": BLD / "analysis" / "est_benchmark_pow.yaml", 
-        "least square": BLD / "analysis" / "est_benchmark_pow_alt1.yaml",
-        "minimize": BLD / "analysis" / "est_benchmark_pow_alt2.yaml"
+        "curve_fit": BLD / "analysis" / "est_benchmark_pow.yaml", 
+        "least_square": BLD / "analysis" / "est_benchmark_pow_alt1.yaml",
+        "minimize_neldermead": BLD / "analysis" / "est_benchmark_pow_alt2.yaml"
     }
 )
 @pytask.mark.produces(BLD / "tables" / "table_pow_comparison.csv")
