@@ -1,4 +1,31 @@
-# EPP_final_project
+# Structural Behavioral Economics (Della Vigna, Pope 2018) using Estimagic by Edoardo Falchi and Nigar Valiyeva
+## EPP for Economists Final Project, University of Bonn WS 21/22
+
+This project replicates part of the main results from [DellaVigna and Pope, 2018](https://github.com/MassimilianoPozzi/python_julia_structural_behavioral_economics),
+specifically focusing on structural estimates using non linear least squares (NLS). The
+starting point from which we build upon our codes is the replication of the mentioned
+paper by Nunnari and Pozzi, 2021 from Bocconi University. Our goal is to improve on
+that by putting emphasis on programming best-practices and applying concepts learned
+in the course "Effective Programming Practices for Economists", such as Pytask, Pytest,
+Estimagic (Gabler, 2021), Sphinx, functional programming and docstrings.
+
+### Environment
+
+For a local machine to run this project, it needs to have a Python and LaTex distribution.
+The project was tested on Windows 10 operating system with python. To run this project in a local machine
+
+`conda ..`
+
+jhjkh
+
+
+### Structure of the project
+
+This project has been build based on [a template by von Gaudecker, 2019](https://econ-project-templates.readthedocs.io/en/stable/index.html)
+
+
+jkh
+
 
 # IDEA STORAGE
 
