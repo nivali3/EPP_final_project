@@ -5,33 +5,28 @@
 Introduction
 ************
 
-You can find the documentation on the rationale, pytask, and more background at https://econ-project-templates.readthedocs.io/en/stable/.
+This project replicates part of the main results from `DellaVigna and Pope, 2018 <https://doi.org/10.1093/restud/rdx033>`_,
+specifically focusing on structural estimates using non linear least squares (NLS). The
+starting point from which we build upon our codes is the replication of the mentioned
+paper by `Nunnari and Pozzi, 2021 <https://github.com/MassimilianoPozzi/python_julia_structural_behavioral_economics>`_
+from Bocconi University. Our goal is to improve on that by putting emphasis on programming best-practices and applying concepts learned
+in the course "Effective Programming Practices for Economists", such as Pytask, Pytest,
+`Estimagic (Gabler, 2021) <https://github.com/OpenSourceEconomics/estimagic>`_, Sphinx, functional programming and docstrings.
 
-The Python version of the template uses a modified version of Stachurski's and Sargent's code accompanying their Online Course :cite:`StachurskiSargent13` for Schelling's (1969, :cite:`Schelling69`) segregation model as the running example.
-
+This project has been build based on `a template by von Gaudecker, 2019 <https://econ-project-templates.readthedocs.io/en/stable/index.html>`_.
 
 .. _getting_started:
 
 Getting started
 ===============
 
-**This assumes you have completed the steps in the `Getting Started section of the documentation <https://econ-project-templates.readthedocs.io/en/stable/getting_started.html>`_ and **everything worked.**
+For a local machine to run this project, it needs to have a Python and LaTex distribution.
+The project was tested on Windows 10 operating system.
 
-The logic of the project template works by step of the analysis:
+The project environment includes all the dependencies needed to run the project.
 
-1. Data management
-2. The actual estimations / simulations / ?
-3. Visualisation and results formatting (e.g. exporting of LaTeX tables)
-4. Research paper and presentations.
-
-It can be useful to have code and model parameters available to more than one of these steps, in that case see sections :ref:`model_specifications`, :ref:`model_code`, and :ref:`library`.
-
-First of all, think about whether this structure fits your needs -- if it does not, you need to adjust (delete/add/rename) directories and files in the following locations:
-
-    * Directories in **src/**;
-    * The documentation source files in **src/documentation/** (Note: These should follow the directories in **src** exactly);
-    * The list of included documentation source files in **src/documentation/index.rst**
-
-Later adjustments should be painlessly possible, so things won't be set in stone.
-
-Once you have done that, move your source data to **src/original_data/** and start filling up the actual steps of the project workflow (data management, analysis, final steps, paper). All you should need to worry about is to specify the tasks for `pytask`.
+To run this project in a local machine:
+ - after cloning the repo, open a terminal in the root directory of the project
+and create and activate the environment typing `$ conda env create -f environment.yml` and `$ conda activate structural_behavioral_economics_dellavigna_pope_2018_using_estimagic` commands, respectively.
+ - For imports to work, the following command should be typed to the terminal in the root directory of the terminal: `$ conda develop .`
+ - To generate the output files that will be stored in `bld` folder, type `$ pytask` in the root directory of your terminal.

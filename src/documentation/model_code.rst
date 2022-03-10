@@ -4,13 +4,12 @@
 Model code
 **********
 
-The directory *src.model_code* contains source files that might differ by model and which are potentially used at various steps of the analysis.
-
-For example, you may have a class that is used both in the :ref:`analysis` and the :ref:`final` steps. Additionally, maybe you have different utility functions in the baseline version and for your robustness check. You can just inherit from the baseline class and override the utility function then.
-
-The ``Agent`` class of the Schelling example
+The functions of ``costly effort model`` written for optimizers from `SciPy` library 
 ============================================
-
-.. automodule:: src.model_code.agent
+.. automodule:: src.model_code.model_function
     :members:
 
+The functions of ``costly effort model`` written for `Estimagic` package 
+============================================
+.. automodule:: src.model_code.model_function_estimagic
+    :members:

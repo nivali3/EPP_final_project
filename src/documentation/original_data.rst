@@ -6,6 +6,5 @@ Original data
 
 Documentation of the different datasets in *original_data*.
 
-In the original data section you would store the raw data, which you should not manipulate to ensure reproducibility.
-
-If you want to include multiple data sets, you can also create subfolders for the sake of a clear structure.
+    * :file:`ExpertForecastCleanLong.dta` contains forecasts from academic experts. This dataset is used for plotting figure 5 of the original paper.
+    * :file:`mturk_clean_data_short.dta` contains the dataset used for non-linear least squares analysis.
