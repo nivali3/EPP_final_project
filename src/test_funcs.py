@@ -1,4 +1,4 @@
-'''testing functions
+'''testing the functions in src/model_code.
 '''
 
 import pandas as pd
