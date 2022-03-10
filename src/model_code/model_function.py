@@ -58,7 +58,11 @@ def estimated_effort(xdata, *params, scenario):
         charity_dmmy = xdata['charity_dummy']
 
         comp_1= max(k, 1e-115)
-        comp_2= np.maximum(s + gift*0.4*gift_dmmy + (beta**delay_dmmy)*(delta**delay_wks)*piece_rates + alpha*charity_rates + a*0.01*charity_dmmy, 1e-10)  
+        comp_2= np.maximum(
+            s
+            + gift*0.4*gift_dmmy
+            + (beta**delay_dmmy)*(delta**delay_wks)*piece_rates
+            + alpha*charity_rates + a*0.01*charity_dmmy, 1e-10)  
 
     elif scenario == 'prob_weight_lin_curv':
 
@@ -71,7 +75,9 @@ def estimated_effort(xdata, *params, scenario):
         prob_dmmy = xdata['prob']
 
         comp_1 = max(k, 1e-115)
-        comp_2 = np.maximum(s+p_weight**weight_dmmy*prob_dmmy*piece_rates**curv, 1e-10)
+        comp_2 = np.maximum(
+            s
+            + p_weight**weight_dmmy*prob_dmmy*piece_rates**curv, 1e-10)
     
     elif scenario == 'prob_weight_conc_curv':
 
@@ -84,7 +90,9 @@ def estimated_effort(xdata, *params, scenario):
         prob_dmmy = xdata['prob']
 
         comp_1 = max(k, 1e-115)
-        comp_2 = np.maximum(s+p_weight**weight_dmmy*prob_dmmy*piece_rates**curv, 1e-10)
+        comp_2 = np.maximum(
+            s
+            + p_weight**weight_dmmy*prob_dmmy*piece_rates**curv, 1e-10)
 
     else:
 
@@ -95,7 +103,9 @@ def estimated_effort(xdata, *params, scenario):
         prob_dmmy = xdata['prob']
 
         comp_1 = max(k, 1e-115)
-        comp_2 = np.maximum(s+p_weight**weight_dmmy*prob_dmmy*piece_rates**curv, 1e-10)
+        comp_2 = np.maximum(
+            s
+            + p_weight**weight_dmmy*prob_dmmy*piece_rates**curv, 1e-10)
 
     return (-1/g * np.log(comp_1) + 1/g*np.log(comp_2))
 
