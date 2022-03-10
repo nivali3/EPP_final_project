@@ -3,13 +3,15 @@ import pandas as pd
 
 
 def create_nls_data(data, treatment_classes, payoff_classes, scenario_dummies):
-    """Generate the dataset suitable for NLS by adding columns for payoffs and efforts to the original data.
+    """Generate the dataset suitable for NLS by adding columns for
+    payoffs and efforts to the original data.
 
     Args:
         data (dataset): initial data-mturk_clean_data_short
         treatment_classes (dict): dictionary containing treatment identifiers
-        payoff_classes (dict): dictionary containing payoff. It must have the same keys and the same number of
-        values for each key as treatment_classes
+        payoff_classes (dict): dictionary containing payoff. It must have the
+            same keys and the same number of values for each key as
+            treatment_classes
  
     Returns:
         (pd.DataFrame): dataset ready to be used for NLS analysis
@@ -21,22 +23,25 @@ def create_nls_data(data, treatment_classes, payoff_classes, scenario_dummies):
     data.drop('buttonpresses', axis=1, inplace=True)
     data_with_dummies =_create_scenario_dummies(data, scenario_dummies)
 
-    return pd.concat(objs=[data, data_with_payoffs, data_with_efforts, data_with_dummies], axis=1)
+    return pd.concat(objs=[
+        data, data_with_payoffs, 
+        data_with_efforts, data_with_dummies], axis=1)
 
 
 def _create_new_payoffs(data, treatment_classes, payoff_classes):
-    """Generate the dataset whose columns containt the treatments' payoffs 
+    """Generate the dataset whose columns containt the treatments' payoffs
 
     Args:
         data (dataset): initial data-mturk_clean_data_short
         treatment_classes (dict): dictionary containing treatment identifiers
-        payoff_classes (dict): dictionary containing payoff. It must have the same keys and the same number of
-        values for each key as treatment_classes
+        payoff_classes (dict): dictionary containing payoff. It must have the same
+            keys and the same number of values for each key as treatment_classes
  
     Returns:
         data_with_payoffs (pd.DataFrame): dataset with payoffs
     
     """
+
     data_with_payoffs = data[['treatment']]
     
     for key in treatment_classes.keys():
@@ -50,7 +55,7 @@ def _create_new_payoffs(data, treatment_classes, payoff_classes):
 
 
 def _create_efforts(data):
-    """Generate the dataset whose columns containt the treatments' efforts 
+    """Generate the dataset whose columns containt the treatments' efforts
 
     Args:
         data (dataset): initial data-mturk_clean_data_short
@@ -59,6 +64,7 @@ def _create_efforts(data):
         data_with_efforts (pd.DataFrame): dataset with efforts
     
     """
+    
     data_with_efforts = data[['buttonpresses']]
     
     data_with_efforts += 0.1
@@ -85,4 +91,7 @@ def _create_scenario_dummies(data, scenario_dummies):
                 
     data_with_dummies.drop('treatment', axis=1, inplace=True)
 
+    # data_with_dummies = data_with_dummies.astype('int32')
+
     return data_with_dummies
+    

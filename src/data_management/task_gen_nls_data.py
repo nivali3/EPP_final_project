@@ -21,7 +21,6 @@ treatment_classes = {
     'weight_dummy' : ['6.1'],
     'gift_dummy' : ['10']
 }
-
 payoff_classes = {
     'payoff_per_100' : [0.01, 0.1, 0.0, 0.001, 0.04, 0.01, 0.01, 0.02, 1],
     'payoff_charity_per_100' : [0.01, 0.1],
@@ -32,7 +31,6 @@ payoff_classes = {
     'weight_dummy' : [1],
     'gift_dummy' : [1]
 }
-
 scenario_dummies = {'dummy1':['1.1','1.2','1.3'],
     'samplenw':['3.1','3.2','4.1','4.2','10'],
     'samplepr':['6.1','6.2']
@@ -45,7 +43,10 @@ def task_generate_nls_data(depends_on, produces):
 
     raw_data = pd.read_stata(depends_on)
 
-    nls_data = create_nls_data(raw_data, treatment_classes, payoff_classes, scenario_dummies)
+    nls_data = create_nls_data(
+        raw_data, treatment_classes,
+        payoff_classes, scenario_dummies)
     
     with open(produces, "w") as f:
         nls_data.to_csv(f, index=False)
+        
