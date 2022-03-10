@@ -8,6 +8,7 @@ dependencies:
   - estimagic
   - ipykernel
   - jupyterlab
+  - latexmk
   - numpy
   - plotly>=5.5.0
   - pandas
