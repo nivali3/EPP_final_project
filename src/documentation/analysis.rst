@@ -14,7 +14,7 @@ Tasks in ``task_estimate_parameters.py``
     :members:
 
 
-tasks in ``task_estimate_parameters_with_estimagic.py`` 
+tasks in ``task_estimate_parameters_with_estimagic.py``
 =================
 .. automodule:: src.analysis.task_estimate_parameters_with_estimagic
     :members:

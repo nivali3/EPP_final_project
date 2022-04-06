@@ -2,14 +2,15 @@
 \usepackage{a4wide}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
+\usepackage{textcomp,textgreek}
 \usepackage{float, afterpage, rotating, graphicx}
 \usepackage{epstopdf}
 \usepackage{longtable, booktabs, tabularx}
 \usepackage{fancyvrb, moreverb, relsize}
 \usepackage{eurosym, calc}
 % \usepackage{chngcntr}
-\usepackage{amsmath, amssymb, amsfo\usepackage{caption}
-nts, amsthm, bm}
+\usepackage{amsmath, amssymb, amsfonts, amsthm, bm}
+\usepackage{caption}
 \usepackage{mdwlist}
 \usepackage{xfrac}
 \usepackage{setspace}
@@ -69,7 +70,7 @@ nts, amsthm, bm}
 
 \date{
     %{\bf Preliminary -- please do not quote}
-    \\[1ex]
+    % \\[1ex]
     \today
 }
 
@@ -77,7 +78,7 @@ nts, amsthm, bm}
 
 
 \begin{abstract}
-    This project\footnote{This project has been build based on a template by \cite{GaudeckerEconProjectTemplates}.} replicates part of the main results from \cite{dellavigna2018motivates}, specifically focusing on structural estimates using non linear least squares (NLS). The starting point from which we build upon our codes is the replication of the mentioned paper by \cite{PozziNunnari} from Bocconi University\footnote{Their repo is publicly available at \url{https://github.com/MassimilianoPozzi/python_julia_structural_behavioral_economics}}. Our goal is to improve on that by putting emphasis on programming best-practices and applying concepts learned in the course "Effective Programming Practices for Economists", such as Pytask, Pytest, Estimagic \citep{Gabler2021}, Sphinx, functional programming and docstrings. 
+    This project\footnote{This project has been build based on a template by \cite{GaudeckerEconProjectTemplates}.} replicates part of the main results from \cite{dellavigna2018motivates}, specifically focusing on structural estimates using non linear least squares (NLS). The starting point from which we build upon our codes is the replication of the mentioned paper by \cite{PozziNunnari} from Bocconi University\footnote{Their repo is publicly available at \url{https://github.com/MassimilianoPozzi/python_julia_structural_behavioral_economics}}. Our goal is to improve on that by putting emphasis on programming best-practices and applying concepts learned in the course "Effective Programming Practices for Economists", such as Pytask, Pytest, Estimagic \citep{Gabler2021}, Sphinx, functional programming and docstrings.
 \end{abstract}
 \clearpage
 
@@ -85,7 +86,7 @@ nts, amsthm, bm}
 \label{sec:introduction}
 Authors' research question is: \emph{"How much do different monetary and non-monetary motivators induce costly effort?"}. They conducted a large-scale real-effort experiment with eighteen treatment arms in which participants' task is to alternately press the “a” and “b” buttons on their keyboards as quickly as possible for ten minutes. They investigated the effect of standard incentives alone and together with behavioral economics components.
 
-\section{Brief model overview \footnote{This section is taken from the corresponding part in \cite{PozziNunnari} notebook.}}
+\section{Brief model overview }\footnote{This section is taken from the corresponding part in \cite{PozziNunnari} notebook.}
 \label{sec:model}
 The model is one of costly effort, where an agent needs to choose the optimal effort to solve a tradeoff problem between disutility of effort and consumption utility derived from the consequent payment. With a total of 18 different treatments, the authors estimates several parameters derived from three benchmark treatments with standard incentives and fifteen treatments with social preferences, time preferences, and prospect theory probability weighting. Here we briefly outline the benchmark model and the solutions found when using non-linear-least-squares:
 $$
@@ -113,17 +114,17 @@ We replicate panel A and B of Table 5 and panel A of Table 6 of the original pap
 \subsubsection{Parameters estimation without Estimagic}
 
 \begin{table}[H]
-\input{..\..\bld\paper\table_pow_comparison.tex}
+\input{../../bld/paper/table_pow_comparison.tex}
 \caption{Parameters estimation comparison using three different optimization algorithms for the benchmark case with power cost function.}
 \end{table}
 
 \begin{table}[H]
-\scalebox{0.8}{\input{..\..\bld\paper\table_nls_noweight_behavioral.tex}}
+\scalebox{0.8}{\input{../../bld/paper/table_nls_noweight_behavioral.tex}}
 \caption{Behavioral treatments parameters with no probability weighting. Columns (2)-(3) and columns (4)-(5) report estimates and standard errors with power and exponential cost function, respectively.}
 \end{table}
 
 \begin{table}[H]
-\scalebox{0.4}{\input{..\..\bld\paper\table_nls_probweight_behavioral.tex}}
+\scalebox{0.4}{\input{../../bld/paper/table_nls_probweight_behavioral.tex}}
 \caption{Behavioral treatments parameters with probability weighting. Estimates and standard errors with linear (columns 2-3-8-9), concave (columns 4-5-10-11), and estimated (columns 6-7-12-13) curvature of value function.}
 \end{table}
 
@@ -131,29 +132,29 @@ We replicate panel A and B of Table 5 and panel A of Table 6 of the original pap
 \subsubsection{Parameters estimation with Estimagic}
 
 \begin{table}[H]
-\scalebox{0.4}{\input{..\..\bld\paper\table_estimagic_nls_benchmark.tex}}
+\scalebox{0.4}{\input{../../bld/paper/table_estimagic_nls_benchmark.tex}}
 \caption{Benchmark treatments parameters. The table reports estimates and bootstrapped standard errors using three different optimization algorithms: `neldermead` (columns from 2 to 5), `ls\_trf` (columns from 6 to 9), `ls\_dogbox` (columns from 10 to 13).}
 \end{table}
 
 \begin{table}[H]
-\scalebox{0.4}{\input{..\..\bld\paper\table_estimagic_nls_noweight_behavioral.tex}}
+\scalebox{0.4}{\input{../../bld/paper/table_estimagic_nls_noweight_behavioral.tex}}
 \caption{Behavioral treatments parameters with no probability weighting. The table reports estimates and bootstrapped standard errors using three different optimization algorithms: `neldermead` (columns from 2 to 5), `ls\_trf` (columns from 6 to 9), `ls\_dogbox` (columns from 10 to 13).}
 \end{table}
 
 \begin{table}[H]
-\scalebox{0.4}{\input{..\..\bld\paper\table_estimagic_nls_probweight_lin_curv.tex}}
+\scalebox{0.4}{\input{../../bld/paper/table_estimagic_nls_probweight_lin_curv.tex}}
 \caption{Behavioral treatments parameters with probability weighting. The specification
 reports the estimate for a probability weighting coefficient under the assumption of linear value function. The table reports estimates and bootstrapped standard errors using three different optimization algorithms: `neldermead` (columns from 2 to 5), `ls\_trf` (columns from 6 to 9), `ls\_dogbox` (columns from 10 to 13).}
 \end{table}
 
 \begin{table}[H]
-\scalebox{0.4}{\input{..\..\bld\paper\table_estimagic_nls_probweight_conc_curv.tex}}
+\scalebox{0.4}{\input{../../bld/paper/table_estimagic_nls_probweight_conc_curv.tex}}
 \caption{Behavioral treatments parameters with probability weighting. The specification
 reports the estimate for a probability weighting coefficient under the assumption of concave value function with curvature 0.88. The table reports estimates and bootstrapped standard errors using three different optimization algorithms: `neldermead` (columns from 2 to 5), `ls\_trf` (columns from 6 to 9), `ls\_dogbox` (columns from 10 to 13).}
 \end{table}
 
 \begin{table}[H]
-\scalebox{0.4}{\input{..\..\bld\paper\table_estimagic_nls_probweight_est_curv.tex}}
+\scalebox{0.4}{\input{../../bld/paper/table_estimagic_nls_probweight_est_curv.tex}}
 \caption{Behavioral treatments parameters with probability weighting. The specification
 reports the estimate for a probability weighting coefficient with estimated curvature. The table reports estimates and bootstrapped standard errors using three different optimization algorithms: `neldermead` (columns from 2 to 5), `ls\_trf` (columns from 6 to 9), `ls\_dogbox` (columns from 10 to 13).}
 \end{table}
@@ -162,27 +163,27 @@ reports the estimate for a probability weighting coefficient with estimated curv
 \subsection{Figures}
 
 \begin{figure}[H]
-\includegraphics[scale=0.75]{..\..\bld\figures\figure_3.png}
+\includegraphics[scale=0.75]{../../bld/figures/figure_3.png}
 \caption{Replication of Figure 3 from \cite{dellavigna2018motivates}}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics[scale=0.75]{..\..\bld\figures\figure_4_a.png}
+\includegraphics[scale=0.75]{../../bld/figures/figure_4_a.png}
 \caption{Replication of Figure 4 (a) from \cite{dellavigna2018motivates}}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics[scale=0.75]{..\..\bld\figures\figure_4_b.png}
+\includegraphics[scale=0.75]{../../bld/figures/figure_4_b.png}
 \caption{Replication of Figure 4 (b) from \cite{dellavigna2018motivates}}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics[scale=0.75]{..\..\bld\figures\figure_4_c.png}
+\includegraphics[scale=0.75]{../../bld/figures/figure_4_c.png}
 \caption{Replication of Figure 4 (c) from \cite{dellavigna2018motivates}}
 \end{figure}
 
 \begin{figure}[H]
-\includegraphics[scale=0.75]{..\..\bld\figures\figure_5.png}
+\includegraphics[scale=0.75]{../../bld/figures/figure_5.png}
 \caption{Replication of Figure 5 from \cite{dellavigna2018motivates}}
 \end{figure}
 

@@ -1,4 +1,4 @@
-name: structural_behavioral_economics_dellavigna_pope_2018_using_estimagic
+name: epp-final-project-team_behavioral
 channels:
   - conda-forge
   - plotly
@@ -8,7 +8,6 @@ dependencies:
   - estimagic
   - ipykernel
   - jupyterlab
-  - latexmk
   - numpy
   - plotly>=5.5.0
   - pandas

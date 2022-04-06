@@ -1,6 +1,6 @@
-'''Generate tables which are stored in `bld/figures`.
+"""Generate tables which are stored in `bld/figures`.
 
-'''
+"""
 import numpy as np
 import pandas as pd
 import pytask
@@ -11,29 +11,40 @@ from src.config import BLD
 
 @pytask.mark.depends_on(
     {
-        "curve_fit": BLD / "analysis" / "estimated_parameters" / "benchmark_est_pow.yaml", 
+        "curve_fit": BLD
+        / "analysis"
+        / "estimated_parameters"
+        / "benchmark_est_pow.yaml",
         "least_square": BLD / "analysis" / "benchmark_est_pow_alt1.yaml",
-        "minimize_neldermead": BLD / "analysis" / "benchmark_est_pow_alt2.yaml"
+        "minimize_neldermead": BLD / "analysis" / "benchmark_est_pow_alt2.yaml",
     }
 )
 @pytask.mark.produces(BLD / "tables" / "table_pow_comparison.csv")
 def task_compare_opt_pow(depends_on, produces):
-    """Load the benchmark parameter estimates (power cost function scenario) 
-    computed using three different optimization functions from Scipy, namely: 
+    """Load the benchmark parameter estimates (power cost function scenario)
+    computed using three different optimization functions from Scipy, namely:
     curve_fit, least_square, minimize. Save this comparison table in a csv
     file in `bld/tables`.
 
     """
-    est_dictionary = {'parameters': [
-        "Curvature \u03B3 of cost function","Level k of cost of effort", "Intrinsic motivation s","Min obj. function"]}
+    est_dictionary = {
+        "parameters": [
+            "Curvature \u03B3 of cost function",
+            "Level k of cost of effort",
+            "Intrinsic motivation s",
+            "Min obj. function",
+        ]
+    }
     for name, values in depends_on.items():
-        with open(values, "r") as stream:
+        with open(values) as stream:
             temp = yaml.safe_load(stream)
-            est_dictionary[name] = list(np.round(temp['estimates'], 3)) + list(np.round([temp['min obj func']], 3))
-    est_dictionary['authors'] = np.round([20.546,5.12e-13,3.17, 672.387], 3)
+            est_dictionary[name] = list(np.round(temp["estimates"], 3)) + list(
+                np.round([temp["min obj func"]], 3)
+            )
+    est_dictionary["authors"] = np.round([20.546, 5.12e-13, 3.17, 672.387], 3)
 
     est_DF = pd.DataFrame.from_dict(est_dictionary)
-    est_DF.set_index('parameters', inplace=True)
+    est_DF.set_index("parameters", inplace=True)
 
     with open(produces, "w", encoding="utf-8") as y:
         est_DF.to_csv(y)
@@ -41,10 +52,22 @@ def task_compare_opt_pow(depends_on, produces):
 
 @pytask.mark.depends_on(
     {
-        "bench pow": BLD / "analysis" / "estimated_parameters" / "benchmark_est_pow.yaml", 
-        "noweight pow": BLD / "analysis" / "estimated_parameters" / "no_weight_est_pow.yaml", 
-        "bench exp": BLD / "analysis" / "estimated_parameters" / "benchmark_est_exp.yaml", 
-        "noweight exp": BLD / "analysis" / "estimated_parameters" / "no_weight_est_exp.yaml" 
+        "bench pow": BLD
+        / "analysis"
+        / "estimated_parameters"
+        / "benchmark_est_pow.yaml",
+        "noweight pow": BLD
+        / "analysis"
+        / "estimated_parameters"
+        / "no_weight_est_pow.yaml",
+        "bench exp": BLD
+        / "analysis"
+        / "estimated_parameters"
+        / "benchmark_est_exp.yaml",
+        "noweight exp": BLD
+        / "analysis"
+        / "estimated_parameters"
+        / "no_weight_est_exp.yaml",
     }
 )
 @pytask.mark.produces(BLD / "tables" / "table_nls_noweight_behavioral.csv")
@@ -57,25 +80,30 @@ def task_nls_noweight_behavioral(depends_on, produces):
     """
 
     est_dictionary = {
-        'parameters': [
-            "Curvature \u03B3 of cost function", "Level k of cost of effort",
-            "Intrinsic motivation s","Social preferences \u03B1",
-            "Warm glow coefficient a","Gift exchange \u0394s ",
-            "Present bias \u03B2","(Weekly) discount factor \u03B4"]
+        "parameters": [
+            "Curvature \u03B3 of cost function",
+            "Level k of cost of effort",
+            "Intrinsic motivation s",
+            "Social preferences \u03B1",
+            "Warm glow coefficient a",
+            "Gift exchange \u0394s ",
+            "Present bias \u03B2",
+            "(Weekly) discount factor \u03B4",
+        ]
     }
 
-    for i in ['pow','exp']:
-        with open(depends_on[f'bench {i}'], "r") as stream:
+    for i in ["pow", "exp"]:
+        with open(depends_on[f"bench {i}"]) as stream:
             temp = yaml.safe_load(stream)
-            est_dictionary[f'{i}_est'] = temp['estimates'] 
-            est_dictionary[f'{i}_se'] = temp['std dev']
-        with open(depends_on[f'noweight {i}'], "r") as stream:
+            est_dictionary[f"{i}_est"] = temp["estimates"]
+            est_dictionary[f"{i}_se"] = temp["std dev"]
+        with open(depends_on[f"noweight {i}"]) as stream:
             temp = yaml.safe_load(stream)
-            est_dictionary[f'{i}_est'] += temp['estimates'][3:] 
-            est_dictionary[f'{i}_se'] += temp['std dev'][3:]
+            est_dictionary[f"{i}_est"] += temp["estimates"][3:]
+            est_dictionary[f"{i}_se"] += temp["std dev"][3:]
 
     est_DF = pd.DataFrame.from_dict(est_dictionary)
-    est_DF.set_index('parameters', inplace=True)
+    est_DF.set_index("parameters", inplace=True)
 
     with open(produces, "w", encoding="utf-8") as y:
         est_DF.to_csv(y)
@@ -83,12 +111,30 @@ def task_nls_noweight_behavioral(depends_on, produces):
 
 @pytask.mark.depends_on(
     {
-        "lin curv pow": BLD / "analysis" / "estimated_parameters" / "weight_lin_curv_est_pow.yaml", 
-        "conc curv pow": BLD / "analysis" / "estimated_parameters" / "weight_conc_curv_est_pow.yaml", 
-        "estimated curv pow": BLD / "analysis" / "estimated_parameters" / "weight_est_curv_est_pow.yaml", 
-        "lin curv exp": BLD / "analysis" / "estimated_parameters" / "weight_lin_curv_est_exp.yaml",
-        "conc curv exp": BLD / "analysis" / "estimated_parameters" / "weight_conc_curv_est_exp.yaml",
-        "estimated curv exp": BLD / "analysis" / "estimated_parameters" / "weight_est_curv_est_exp.yaml"
+        "lin curv pow": BLD
+        / "analysis"
+        / "estimated_parameters"
+        / "weight_lin_curv_est_pow.yaml",
+        "conc curv pow": BLD
+        / "analysis"
+        / "estimated_parameters"
+        / "weight_conc_curv_est_pow.yaml",
+        "estimated curv pow": BLD
+        / "analysis"
+        / "estimated_parameters"
+        / "weight_est_curv_est_pow.yaml",
+        "lin curv exp": BLD
+        / "analysis"
+        / "estimated_parameters"
+        / "weight_lin_curv_est_exp.yaml",
+        "conc curv exp": BLD
+        / "analysis"
+        / "estimated_parameters"
+        / "weight_conc_curv_est_exp.yaml",
+        "estimated curv exp": BLD
+        / "analysis"
+        / "estimated_parameters"
+        / "weight_est_curv_est_exp.yaml",
     }
 )
 @pytask.mark.produces(BLD / "tables" / "table_nls_probweight_behavioral.csv")
@@ -100,25 +146,33 @@ def task_nls_probweight_behavioral(depends_on, produces):
     Save this in a csv file in `bld/tables`.
 
     """
-    
-    est_dictionary = {'parameters': ["Curvature \u03B3 of cost function", "Level k of cost of effort", "Intrinsic motivation s","Probability weighting \u03C0 (1%) (in %)", "Curvature of utility over piece rate"]}
 
-    for i in ['pow','exp']:
-        with open(depends_on[f'lin curv {i}'], "r") as stream:
+    est_dictionary = {
+        "parameters": [
+            "Curvature \u03B3 of cost function",
+            "Level k of cost of effort",
+            "Intrinsic motivation s",
+            "Probability weighting \u03C0 (1%) (in %)",
+            "Curvature of utility over piece rate",
+        ]
+    }
+
+    for i in ["pow", "exp"]:
+        with open(depends_on[f"lin curv {i}"]) as stream:
             temp = yaml.safe_load(stream)
-            est_dictionary[f'{i}_est1'] = temp['estimates'] + [1]
-            est_dictionary[f'{i}_se1'] = temp['std dev'] + [0]
-        with open(depends_on[f'conc curv {i}'], "r") as stream:
+            est_dictionary[f"{i}_est1"] = temp["estimates"] + [1]
+            est_dictionary[f"{i}_se1"] = temp["std dev"] + [0]
+        with open(depends_on[f"conc curv {i}"]) as stream:
             temp = yaml.safe_load(stream)
-            est_dictionary[f'{i}_est2'] = temp['estimates'] + [0.88]
-            est_dictionary[f'{i}_se2'] = temp['std dev'] + [0]
-        with open(depends_on[f'estimated curv {i}'], "r") as stream:
+            est_dictionary[f"{i}_est2"] = temp["estimates"] + [0.88]
+            est_dictionary[f"{i}_se2"] = temp["std dev"] + [0]
+        with open(depends_on[f"estimated curv {i}"]) as stream:
             temp = yaml.safe_load(stream)
-            est_dictionary[f'{i}_est3'] = temp['estimates'] 
-            est_dictionary[f'{i}_se3'] = temp['std dev']
+            est_dictionary[f"{i}_est3"] = temp["estimates"]
+            est_dictionary[f"{i}_se3"] = temp["std dev"]
 
     est_DF = pd.DataFrame.from_dict(est_dictionary)
-    est_DF.set_index('parameters', inplace=True)
+    est_DF.set_index("parameters", inplace=True)
 
     with open(produces, "w", encoding="utf-8") as y:
         est_DF.to_csv(y)
