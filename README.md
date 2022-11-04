@@ -24,7 +24,7 @@ The project environment includes all the dependencies needed to run the project.
 
 To run this project in a local machine:
  - after cloning the repo, open a terminal in the root directory of the project
-and create and activate the environment typing `$ conda env create -f environment.yml` and `$ conda activate structural_behavioral_economics_dellavigna_pope_2018_using_estimagic` commands, respectively.
+and create and activate the environment typing `$ conda env create -f environment.yml` and `$ conda activate epp-final-project-team_behavioral` commands, respectively.
  - For imports to work, the following command should be typed to the terminal in the root directory of the terminal: `$ conda develop .`
  - To generate the output files that will be stored in `bld` folder, type `$ pytask` in the root directory of your terminal.
 
